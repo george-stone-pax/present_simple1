@@ -83,17 +83,44 @@
 
         /* УРОВЕНЬ 2: ЗВЕЗДОПАД И ПУШКА */
         #l2-sky { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: #0b0c10; z-index: 1;}
+        
+        /* 3D Планеты с вращающейся текстурой */
         .l2-planet {
             position: absolute; top: 150px; 
-            width: 180px; height: 180px; border-radius: 50%;
+            width: 220px; height: 220px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center; text-align: center;
-            font-size: 28px; font-weight: bold; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            box-shadow: inset -15px -15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.1);
+            font-size: 28px; font-weight: bold; color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.9);
+            /* Внутренняя тень создает объем, внешняя тень - легкое атмосферное свечение */
+            box-shadow: inset -25px -25px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1);
+            overflow: hidden; z-index: 2;
         }
-        .planet-0 { background: radial-gradient(circle at 30% 30%, #4facfe 0%, #00f2fe 100%); }
-        .planet-1 { background: radial-gradient(circle at 30% 30%, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%); }
-        .planet-2 { background: radial-gradient(circle at 30% 30%, #f1c40f 0%, #e67e22 100%); }
-        
+        .l2-planet::before {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            z-index: -1; animation: rotateBg 40s linear infinite;
+        }
+        @keyframes rotateBg { 100% { transform: rotate(360deg); } }
+
+        /* Газовый гигант (Полосатый) */
+        .planet-0::before {
+            background: repeating-linear-gradient(45deg, #d35400 0%, #e67e22 10%, #f39c12 20%, #d35400 30%);
+        }
+        /* Планета Земного типа (Океан и материки) */
+        .planet-1::before {
+            background: radial-gradient(circle at 30% 40%, #2ecc71 20%, transparent 22%),
+                        radial-gradient(circle at 70% 60%, #2ecc71 25%, transparent 27%),
+                        radial-gradient(circle at 40% 80%, #2ecc71 15%, transparent 17%),
+                        radial-gradient(circle at 80% 30%, #2ecc71 18%, transparent 20%),
+                        #2980b9;
+        }
+        /* Мертвая луна (Серые кратеры) */
+        .planet-2::before {
+            background: radial-gradient(circle at 20% 30%, #7f8c8d 10%, transparent 12%),
+                        radial-gradient(circle at 60% 70%, #7f8c8d 15%, transparent 17%),
+                        radial-gradient(circle at 70% 20%, #7f8c8d 8%, transparent 10%),
+                        radial-gradient(circle at 30% 80%, #7f8c8d 12%, transparent 14%),
+                        #bdc3c7;
+        }
+
         #l2-cannon {
             position: absolute; bottom: 20px; left: 600px; width: 80px; height: 100px;
             background: #45a29e; border-radius: 10px 10px 0 0; z-index: 5;
@@ -134,13 +161,18 @@
         const allowedDomains = ['stepik.org', 'welcome.stepik.org'];
         const referrer = document.referrer;
         const isLocal = window.location.protocol === 'file:';
-        if (!allowedDomains.some(domain => referrer.includes(domain)) && !isLocal) {
+        
+        const isInsideStepik = allowedDomains.some(domain => referrer.includes(domain));
+        
+        if (!isInsideStepik && !isLocal) {
             document.body.innerHTML = `
                 <div style="background:#000; color:#fff; height:100vh; display:flex;
                             flex-direction:column; align-items:center; justify-content:center;
                             font-family:sans-serif; text-align:center; padding:20px;">
                     <h1>⛔️ Доступ ограничен</h1>
-                    <p>Эта игра — часть платного курса. <br>Вернитесь к обучению на Stepik.</p>
+                    <p>Эта игра — часть платного курса. <br>
+                    Пожалуйста, вернитесь к обучению на Stepik.</p>
+                    <a href="https://stepik.org" style="color:#4ade80;">Перейти к курсу</a>
                 </div>`;
             window.stop();
         }
@@ -209,7 +241,7 @@
         <div id="screen-end" class="screen">
             <h1>Игра окончена!</h1>
             <h2>Оценка: <span id="final-grade" style="color: #f1c40f; font-size: 80px;"></span></h2>
-            <p style="font-size: 30px;">Набрано баллов: <span id="final-score">0</span> из 15.</p>
+            <p style="font-size: 30px;">Набрано баллов: <span id="final-score">0</span> из 24.</p>
             <div>
                 <button onclick="showModal('modal-criteria')">Критерии оценки</button>
                 <button id="secret-word-btn" onclick="showModal('modal-secret')">🗝️ Показать СЕКРЕТНОЕ СЛОВО</button>
@@ -221,8 +253,8 @@
             <div class="modal-content">
                 <h3>Ошибка! ❌</h3>
                 <p id="error-text"></p>
-                <p style="color: red; font-size: 20px; margin-top: 15px;">Штраф: -5 баллов</p>
-                <button onclick="closeError()">Продолжить</button>
+                <!-- Штраф убран -->
+                <button style="margin-top: 20px;" onclick="closeError()">Продолжить</button>
             </div>
         </div>
 
@@ -230,10 +262,10 @@
             <div class="modal-content">
                 <h3>Критерии оценки</h3>
                 <p style="text-align: left; font-size: 20px;">
-                    «5»: 13–15 баллов (85-100%)<br>
-                    «4»: 11–12 баллов (70-84%)<br>
-                    «3»: 8–10 баллов (50-69%)<br>
-                    «2»: 0–7 баллов (менее 50%)
+                    «5»: 21–24 баллов (85-100%)<br>
+                    «4»: 17–20 баллов (70-84%)<br>
+                    «3»: 12–16 баллов (50-69%)<br>
+                    «2»: 0–11 баллов (менее 50%)
                 </p>
                 <button onclick="closeModal('modal-criteria')">Закрыть</button>
             </div>
@@ -315,7 +347,7 @@
 
     function showError(text, callback) {
         isPaused = true; playSfx('wrong');
-        score -= 5; updateScore(); 
+        // Штраф за ошибку убран, игрок просто не получает +1 балл
         document.getElementById('error-text').innerHTML = text;
         showModal('modal-error');
         window.errorCallback = callback;
@@ -328,7 +360,7 @@
     function showHelp() {
         let txt = "";
         if(currentLevel === 1) txt = "Удерживай ПРАВУЮ кнопку мыши, чтобы включить голубой фонарик и сканировать темноту. Нашел правильное слово? Кликай по нему ЛЕВОЙ кнопкой, пока держишь фонарик!";
-        if(currentLevel === 2) txt = "Используй стрелочки ⬅️ и ➡️ для движения пушки. Нажми ПРОБЕЛ, чтобы выстрелить лазером в звезду с правильным ответом.";
+        if(currentLevel === 2) txt = "Используй стрелочки ⬅️ и ➡️ для движения пушки. Нажми ПРОБЕЛ, чтобы выстрелить лазером в планету с правильным ответом.";
         if(currentLevel === 3) txt = "Кликай по словам внизу, чтобы перенести их в предложение. Если передумал — кликни на слово в предложении, и оно вернется обратно. Ошибка засчитается только после того, как заполнены все пропуски!";
         document.getElementById('help-text').innerText = txt;
         showModal('modal-help');
@@ -344,13 +376,16 @@
         else if(lvl === 3) initLevel3();
     }
 
-    // --- УРОВЕНЬ 1: ФОНАРИК ---
+    // --- УРОВЕНЬ 1: ФОНАРИК (8 Заданий) ---
     const l1Data = [
         { sub: "The boy (he) ___", correct: "reads", wrong: ["read", "raeds", "reeds"], rule: "С 'he' глагол требует -s!" },
         { sub: "I ___ apples", correct: "like", wrong: ["likes", "liek", "laike"], rule: "С 'I' окончание -s не нужно!" },
         { sub: "The cat (it) ___", correct: "jumps", wrong: ["jump", "jumes", "jumpps"], rule: "С 'it' (кот) глагол получает -s!" },
         { sub: "We ___ books", correct: "read", wrong: ["reads", "raed", "reds"], rule: "С 'We' окончание не нужно!" },
-        { sub: "The girl (she) ___", correct: "runs", wrong: ["run", "runes", "rns"], rule: "С 'she' глагол требует -s!" }
+        { sub: "The girl (she) ___", correct: "runs", wrong: ["run", "runes", "rns"], rule: "С 'she' глагол требует -s!" },
+        { sub: "They ___ tennis", correct: "play", wrong: ["plays", "plaies", "pley"], rule: "С 'They' окончание -s не нужно!" },
+        { sub: "My brother (he) ___", correct: "sleeps", wrong: ["sleep", "sleeppes", "sleps"], rule: "С 'he' глагол требует -s!" },
+        { sub: "You ___ English", correct: "study", wrong: ["studies", "studi", "studys"], rule: "С 'You' окончание -s не нужно!" }
     ];
 
     let isRightMouseDown = false;
@@ -383,20 +418,18 @@
     }
 
     function initLevel1() {
-        if(questionIndex >= 5) { setTimeout(()=>startLevel(2), 1000); return; }
+        if(questionIndex >= 8) { setTimeout(()=>startLevel(2), 1000); return; }
         let q = l1Data[questionIndex];
         document.getElementById('l1-subject').innerText = q.sub;
         
         const canvas = document.getElementById('l1-words-container');
         canvas.innerHTML = '';
         
-        // Теперь генерируем 4 слова: 1 правильное + 3 с ошибками
         let words = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
         words.forEach((word, i) => {
             let el = document.createElement('div');
             el.className = 'hidden-word'; el.innerText = word;
             
-            // Равномерно распределяем 4 слова по экрану (чтобы не накладывались)
             let rx = 50 + i * 280 + Math.random() * 80;
             let ry = 200 + Math.random() * 300;
             
@@ -420,13 +453,16 @@
         });
     }
 
-    // --- УРОВЕНЬ 2: ПУШКА ---
+    // --- УРОВЕНЬ 2: ПУШКА (8 Заданий) ---
     const l2Data = [
         { sub: "The dogs (they)", correct: "don't", wrong: ["doesn't", "dno't"], rule: "Собаки (They) используют don't." },
         { sub: "The doctor (he)", correct: "doesn't", wrong: ["don't", "deson't"], rule: "Доктор (He) использует doesn't." },
         { sub: "You", correct: "don't", wrong: ["doesn't", "dnot"], rule: "С 'You' используем don't." },
         { sub: "My sister (she)", correct: "doesn't", wrong: ["don't", "dsone't"], rule: "Сестра (She) использует doesn't." },
-        { sub: "My friends (they)", correct: "don't", wrong: ["doesn't", "dont'"], rule: "Друзья (They) используют don't." }
+        { sub: "My friends (they)", correct: "don't", wrong: ["doesn't", "dont'"], rule: "Друзья (They) используют don't." },
+        { sub: "I", correct: "don't", wrong: ["doesn't", "donet"], rule: "С 'I' всегда используем don't." },
+        { sub: "The sun (it)", correct: "doesn't", wrong: ["don't", "dsoent"], rule: "Солнце (It) использует doesn't." },
+        { sub: "We", correct: "don't", wrong: ["doesn't", "dnot"], rule: "С 'We' используем don't." }
     ];
 
     let l2PlayerX = 600;
@@ -438,7 +474,7 @@
     window.addEventListener('keyup', e => { if(e.code in l2Keys) l2Keys[e.code] = false; });
 
     function initLevel2() {
-        if(questionIndex >= 5) { cancelAnimationFrame(animationFrameId); setTimeout(()=>startLevel(3), 1000); return; }
+        if(questionIndex >= 8) { cancelAnimationFrame(animationFrameId); setTimeout(()=>startLevel(3), 1000); return; }
         
         bullet.active = false; document.getElementById('l2-laser').style.display = 'none';
         document.getElementById('l2-subject').innerText = l2Data[questionIndex].sub;
@@ -449,8 +485,8 @@
         let q = l2Data[questionIndex];
         let words = [q.correct, q.wrong[0], q.wrong[1]].sort(()=>Math.random() - 0.5);
         
-        let positions = [150, 550, 950]; // Новые позиции для круглых планет
-        let planetClasses = ['planet-0', 'planet-1', 'planet-2'].sort(()=>Math.random() - 0.5); // Рандомизируем цвета планет
+        let positions = [150, 530, 910];
+        let planetClasses = ['planet-0', 'planet-1', 'planet-2'].sort(()=>Math.random() - 0.5);
         
         words.forEach((w, i) => {
             let el = document.createElement('div');
@@ -458,7 +494,7 @@
             el.innerText = w;
             el.style.left = positions[i] + 'px';
             container.appendChild(el);
-            starsData.push({ el: el, text: w, x: positions[i], y: 150, width: 180, height: 180 });
+            starsData.push({ el: el, text: w, x: positions[i], y: 150, width: 220, height: 220 });
         });
         
         cancelAnimationFrame(animationFrameId);
@@ -507,9 +543,9 @@
             playSfx('correct'); score++; updateScore(); questionIndex++;
             setTimeout(initLevel2, 500);
         } else {
-            let msg = `Ты подбил не ту звезду: ${shotText}. `;
+            let msg = `Ты подбил не ту планету: ${shotText}. `;
             if(q.wrong.includes(shotText) && shotText.length === q.correct.length && shotText !== q.wrong[0]) {
-                msg = `Это звезда-обманка с перепутанными буквами: ${shotText}. `;
+                msg = `Это планета-обманка с перепутанными буквами: ${shotText}. `;
             }
             showError(msg + "<br>" + q.rule + "<br>Правильный ответ: <b>" + q.correct + "</b>", () => {
                 questionIndex++; initLevel2();
@@ -517,20 +553,23 @@
         }
     }
 
-    // --- УРОВЕНЬ 3: КОНСТРУКТОР ПРЕДЛОЖЕНИЯ (ОБНОВЛЕННЫЙ) ---
+    // --- УРОВЕНЬ 3: КОНСТРУКТОР ПРЕДЛОЖЕНИЯ (8 Заданий) ---
     const l3Data = [
         { q: "Does he play chess ?", words: ["he", "play", "Does", "chess", "?"], rule: "Для местоимения <b>he</b> в вопросе всегда используем <b>Does</b>." },
         { q: "Do they like pizza ?", words: ["like", "?", "they", "Do", "pizza"], rule: "Для местоимения <b>they</b> в вопросе всегда используем <b>Do</b>." },
         { q: "Does she read books ?", words: ["books", "she", "?", "read", "Does"], rule: "Для местоимения <b>she</b> в вопросе всегда используем <b>Does</b>." },
         { q: "Do we go home ?", words: ["home", "we", "Do", "?", "go"], rule: "Для местоимения <b>we</b> в вопросе всегда используем <b>Do</b>." },
-        { q: "Does it fly high ?", words: ["high", "fly", "Does", "?", "it"], rule: "Для местоимения <b>it</b> в вопросе всегда используем <b>Does</b>." }
+        { q: "Does it fly high ?", words: ["high", "fly", "Does", "?", "it"], rule: "Для местоимения <b>it</b> в вопросе всегда используем <b>Does</b>." },
+        { q: "Do you drink tea ?", words: ["drink", "you", "Do", "?", "tea"], rule: "Для местоимения <b>you</b> в вопросе всегда используем <b>Do</b>." },
+        { q: "Does John eat meat ?", words: ["meat", "John", "eat", "Does", "?"], rule: "John — это он (he), поэтому в вопросе используем <b>Does</b>." },
+        { q: "Do cats catch mice ?", words: ["cats", "?", "Do", "mice", "catch"], rule: "Cats — это они (they), множественное число, используем <b>Do</b>." }
     ];
 
     let l3Target = [];
     let l3Current = [];
 
     function initLevel3() {
-        if(questionIndex >= 5) { finishGame(); return; }
+        if(questionIndex >= 8) { finishGame(); return; }
         let currentQ = l3Data[questionIndex];
         l3Target = currentQ.q.split(" ");
         l3Current = [];
@@ -542,7 +581,6 @@
         let poolContainer = document.getElementById('l3-pool');
         sentContainer.innerHTML = ''; poolContainer.innerHTML = '';
 
-        // Отрисовка слотов предложения
         for(let i=0; i<l3Target.length; i++) {
             let slot = document.createElement('div');
             slot.className = 'l3-slot';
@@ -550,11 +588,10 @@
             if(l3Current[i]) {
                 slot.classList.add('filled');
                 slot.innerText = l3Current[i];
-                // Функция ВОЗВРАТА слова обратно
                 slot.onclick = () => {
                     if(isPaused) return;
-                    l3Current.splice(i, 1); // Удаляем слово из предложения
-                    renderL3(); // Перерисовываем
+                    l3Current.splice(i, 1);
+                    renderL3();
                 };
             } else {
                 slot.innerText = "___";
@@ -562,23 +599,21 @@
             sentContainer.appendChild(slot);
         }
 
-        // Подготовка пула доступных слов
         let availableWords = [...l3Data[questionIndex].words];
         l3Current.forEach(w => {
             let idx = availableWords.indexOf(w);
-            if(idx > -1) availableWords.splice(idx, 1); // Убираем слова, которые уже в предложении
+            if(idx > -1) availableWords.splice(idx, 1);
         });
 
-        // Отрисовка пула слов
         availableWords.forEach(w => {
             let btn = document.createElement('div');
             btn.className = 'l3-word'; btn.innerText = w;
             btn.onclick = () => {
                 if(isPaused) return;
                 if(l3Current.length < l3Target.length) {
-                    l3Current.push(w); // Добавляем в предложение
+                    l3Current.push(w);
                     renderL3();
-                    checkL3Completion(); // Проверяем, если собрали полностью
+                    checkL3Completion();
                 }
             };
             poolContainer.appendChild(btn);
@@ -586,7 +621,6 @@
     }
 
     function checkL3Completion() {
-        // Проверяем ошибку только когда заполнены все слоты!
         if(l3Current.length === l3Target.length) {
             let expected = l3Target.join(" ");
             let actual = l3Current.join(" ");
@@ -596,7 +630,6 @@
                 setTimeout(initLevel3, 1000);
             } else {
                 let currentQ = l3Data[questionIndex];
-                // Улучшенное, качественное окно объяснения ошибки
                 let errorMsg = `
                     <div style="font-size:22px; line-height: 1.6;">
                         <p style="margin: 0;">Ваш ответ:</p>
@@ -618,8 +651,8 @@
                 `;
                 
                 showError(errorMsg, () => {
-                    l3Current = []; // Сбрасываем предложение после ошибки
-                    renderL3();
+                    questionIndex++; // Идем дальше, но балл не начисляется
+                    initLevel3();
                 });
             }
         }
@@ -631,9 +664,9 @@
         document.getElementById('final-score').innerText = score;
         
         let grade = "2";
-        if(score >= 13) grade = "5";
-        else if(score >= 11) grade = "4";
-        else if(score >= 8) grade = "3";
+        if(score >= 21) grade = "5";
+        else if(score >= 17) grade = "4";
+        else if(score >= 12) grade = "3";
         
         document.getElementById('final-grade').innerText = grade;
         if(grade === "5") document.getElementById('secret-word-btn').style.display = 'inline-block';
