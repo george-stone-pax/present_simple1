@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Present Simple: Фонарик и Лазеры</title>
+    <style>
+        /* === БАЗОВЫЕ СТИЛИ И МАСШТАБИРОВАНИЕ === */
+        body {
+            margin: 0; padding: 0; background-color: #0b0c10; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; color: #fff; user-select: none;
+        }
+
+        #game-wrapper {
+            position: relative; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #game-container {
+            width: 1280px; height: 720px;
+            background: #1f2833;
+            position: relative; transform-origin: center center;
+            box-shadow: 0 0 30px #45a29e; border: 2px solid #66fcf1;
+            border-radius: 15px; overflow: hidden;
+        }
+
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .screen.active { display: flex; }
+
+        h1 { font-size: 60px; color: #66fcf1; margin-bottom: 20px; text-shadow: 0 0 10px #45a29e; text-align: center;}
+        h2 { font-size: 40px; color: #c5c6c7; margin-bottom: 15px; z-index: 10; text-align: center;}
+
+        /* Кнопки */
+        button {
+            padding: 15px 35px; font-size: 26px; font-weight: bold; margin: 10px; cursor: pointer;
+            border: 2px solid #66fcf1; border-radius: 10px; background: rgba(11, 12, 16, 0.8);
+            color: #66fcf1; transition: 0.3s; box-shadow: 0 0 10px rgba(102, 252, 241, 0.2);
+        }
+        button:hover:not(:disabled) { background: #66fcf1; color: #0b0c10; box-shadow: 0 0 20px #66fcf1; }
+        button:disabled { border-color: #555; color: #555; cursor: not-allowed; }
+
+        /* Верхняя панель UI */
+        .top-bar {
+            position: absolute; top: 15px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+        }
+        .score-board { font-size: 28px; font-weight: bold; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 10px; border: 1px solid #45a29e; }
+        .controls { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 10px; border: 1px solid #45a29e; }
+        .controls input[type=range] { cursor: pointer; }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 200;
+        }
+        .modal-content {
+            background: #c5c6c7; color: #0b0c10; padding: 40px; border-radius: 15px;
+            text-align: center; max-width: 650px; border: 4px solid #45a29e;
+        }
+        .modal-content h3 { font-size: 34px; color: #d9534f; margin-top: 0; }
+        .modal-content p { font-size: 24px; font-weight: bold; }
+
+        /* УРОВЕНЬ 1: ФОНАРИК (НОВЫЙ НАДЕЖНЫЙ МЕТОД) */
+        #l1-words-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+        }
+        .hidden-word {
+            position: absolute; font-size: 45px; font-weight: bold; color: #66fcf1;
+            cursor: pointer; padding: 20px; text-shadow: 0 0 15px #45a29e;
+        }
+        /* Тьма, которая перекрывает слова. Pointer-events: none позволяет кликать сквозь неё */
+        #l1-dark-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 3; pointer-events: none;
+            transition: background 0.1s;
+        }
+        .l1-subject { position: absolute; bottom: 40px; width: 100%; text-align: center; font-size: 40px; font-weight: bold; z-index: 5; color: #fff;}
+        .l1-hint { position: absolute; top: 140px; width: 100%; text-align: center; font-size: 22px; color: #4ade80; z-index: 5;}
+
+        /* УРОВЕНЬ 2: ЗВЕЗДОПАД И ПУШКА */
+        #l2-sky { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: #0b0c10; z-index: 1;}
+        .l2-star {
+            position: absolute; top: 80px; width: 180px; height: 80px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,5 61,35 95,35 68,55 78,85 50,70 22,85 32,55 5,35 39,35" fill="%23f1c40f"/></svg>') no-repeat center;
+            background-size: contain; display: flex; justify-content: center; align-items: center;
+            font-size: 24px; font-weight: bold; color: #000; text-shadow: 0 0 5px #fff;
+        }
+        #l2-cannon {
+            position: absolute; bottom: 20px; left: 600px; width: 80px; height: 100px;
+            background: #45a29e; border-radius: 10px 10px 0 0; z-index: 5;
+            box-shadow: inset 0 0 20px #0b0c10, 0 0 15px #66fcf1;
+        }
+        .l2-laser {
+            position: absolute; display: none; background: #ff0055;
+            width: 20px; height: 60px; border-radius: 10px; box-shadow: 0 0 15px #ff0055; z-index: 4;
+        }
+
+        /* УРОВЕНЬ 3: СБОРКА ПРЕДЛОЖЕНИЯ */
+        #l3-workspace { display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 5;}
+        #l3-sentence {
+            display: flex; gap: 15px; margin-top: 100px; margin-bottom: 50px;
+            min-height: 80px; padding: 20px; border-bottom: 3px dashed #45a29e; width: 800px; justify-content: center;
+        }
+        .l3-slot { font-size: 34px; font-weight: bold; color: #66fcf1; padding: 10px 20px; background: rgba(69, 162, 158, 0.2); border-radius: 10px;}
+        #l3-pool { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 800px;}
+        .l3-word {
+            font-size: 30px; padding: 15px 30px; background: #1f2833; border: 2px solid #66fcf1;
+            border-radius: 15px; cursor: pointer; transition: 0.2s; color: #fff;
+        }
+        .l3-word:hover { background: #45a29e; transform: scale(1.1); }
+
+        #secret-word-btn { display: none; background: #8e44ad; border-color: #9b59b6; }
+    </style>
+</head>
+<body>
+
+<script>
+    (function() {
+        const allowedDomains = ['stepik.org', 'welcome.stepik.org'];
+        const referrer = document.referrer;
+        const isLocal = window.location.protocol === 'file:';
+        if (!allowedDomains.some(domain => referrer.includes(domain)) && !isLocal) {
+            document.body.innerHTML = `
+                <div style="background:#000; color:#fff; height:100vh; display:flex;
+                            flex-direction:column; align-items:center; justify-content:center;
+                            font-family:sans-serif; text-align:center; padding:20px;">
+                    <h1>⛔️ Доступ ограничен</h1>
+                    <p>Эта игра — часть платного курса. <br>Вернитесь к обучению на Stepik.</p>
+                </div>`;
+            window.stop();
+        }
+    })();
+</script>
+
+<!-- ========================================== -->
+<!-- ВСТАВЛЯТЬ ССЫЛКИ НА АУДИО ИЗ GITHUB PAGES СЮДА: -->
+<!-- ========================================== -->
+<audio id="bg-music" src="https://george-stone-pax.github.io/my-game-assets/Aylex%20-%20Back%20To%20Life%20(freetouse.com).mp3" loop></audio>
+<audio id="snd-correct" src="https://george-stone-pax.github.io/my-game-assets/rightanswer-95219.mp3"></audio>
+<audio id="snd-wrong" src="https://george-stone-pax.github.io/my-game-assets/dodgeball.mp3"></audio>
+
+<div id="game-wrapper">
+    <div id="game-container">
+        
+        <div class="top-bar">
+            <div class="score-board">Баллы: <span id="score-display">0</span></div>
+            <div class="controls">
+                <span style="font-size:20px;">🔊</span>
+                <input type="range" id="vol" min="0" max="1" step="0.1" value="0.5">
+                <button style="padding: 5px 15px; font-size: 18px; margin:0;" onclick="showHelp()">❓ Как играть</button>
+                <button style="padding: 5px 15px; font-size: 18px; margin:0;" onclick="toggleFullscreen()">⛶</button>
+            </div>
+        </div>
+
+        <div id="screen-menu" class="screen active">
+            <h1>Present Simple</h1>
+            <button onclick="switchScreen('screen-theory')">📚 Теория</button>
+            <button id="btn-start" disabled onclick="startLevel(1)">🎮 Начать игру 🔒</button>
+        </div>
+
+        <div id="screen-theory" class="screen">
+            <h2>Правила Present Simple</h2>
+            <div style="background: rgba(0,0,0,0.6); padding: 30px; border-radius: 15px; max-width: 800px; text-align: left; font-size: 22px;">
+                <p><b>Утверждения:</b> I, you, we, they — обычный глагол (<i>I play</i>). He, she, it — глагол с окончанием <b>-s</b> (<i>He plays</i>).</p>
+                <p><b>Отрицания:</b> Используем <b>don't</b> или <b>doesn't</b>. У глагола убирается окончание -s!</p>
+                <p><b>Вопросы:</b> В начало ставим <b>Do</b> или <b>Does</b>.</p>
+            </div>
+            <button onclick="unlockGame()" style="margin-top: 30px;">Понятно!</button>
+        </div>
+
+        <div id="screen-level1" class="screen">
+            <h2 style="position: absolute; top: 80px; z-index: 10;">Уровень 1: Поиск в темноте</h2>
+            <div class="l1-hint">Удерживай ПРАВУЮ кнопку мыши, чтобы светить фонариком!</div>
+            <div id="l1-words-container"></div>
+            <div id="l1-dark-overlay"></div>
+            <div class="l1-subject" id="l1-subject"></div>
+        </div>
+
+        <div id="screen-level2" class="screen">
+            <h2 style="position: absolute; top: 80px; z-index: 10;">Уровень 2: Лазерная пушка (Отрицания)</h2>
+            <div class="l1-subject" id="l2-subject" style="bottom: 150px;"></div>
+            <div id="l2-sky">
+                <div id="l2-stars-container"></div>
+                <div id="l2-cannon"></div>
+                <div class="l2-laser" id="l2-laser"></div>
+            </div>
+        </div>
+
+        <div id="screen-level3" class="screen">
+            <h2 style="position: absolute; top: 80px; z-index: 10;">Уровень 3: Конструктор вопросов</h2>
+            <div id="l3-workspace">
+                <div id="l3-sentence"></div>
+                <div id="l3-pool"></div>
+            </div>
+        </div>
+
+        <div id="screen-end" class="screen">
+            <h1>Игра окончена!</h1>
+            <h2>Оценка: <span id="final-grade" style="color: #f1c40f; font-size: 80px;"></span></h2>
+            <p style="font-size: 30px;">Набрано баллов: <span id="final-score">0</span> из 15.</p>
+            <div>
+                <button onclick="showModal('modal-criteria')">Критерии оценки</button>
+                <button id="secret-word-btn" onclick="showModal('modal-secret')">🗝️ Показать СЕКРЕТНОЕ СЛОВО</button>
+                <button onclick="location.reload()">Играть снова</button>
+            </div>
+        </div>
+
+        <div id="modal-error" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Ошибка! ❌</h3>
+                <p id="error-text"></p>
+                <p style="color: red; font-size: 20px;">Штраф: -5 баллов</p>
+                <button onclick="closeError()">Продолжить</button>
+            </div>
+        </div>
+
+        <div id="modal-criteria" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Критерии оценки</h3>
+                <p style="text-align: left; font-size: 20px;">
+                    «5»: 13–15 баллов (85-100%)<br>
+                    «4»: 11–12 баллов (70-84%)<br>
+                    «3»: 8–10 баллов (50-69%)<br>
+                    «2»: 0–7 баллов (менее 50%)
+                </p>
+                <button onclick="closeModal('modal-criteria')">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="modal-secret" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Награда! 🏆</h3>
+                <!-- ИЗМЕНЕННОЕ СЕКРЕТНОЕ СЛОВО -->
+                <p style="font-size: 50px; color: #8e44ad; margin: 10px 0;">Sofa - Диван</p>
+                <button onclick="closeModal('modal-secret')">Супер!</button>
+            </div>
+        </div>
+
+        <div id="modal-help" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Как играть?</h3>
+                <p id="help-text"></p>
+                <button onclick="closeModal('modal-help')">В бой!</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // --- МАСШТАБИРОВАНИЕ ---
+    const wrapper = document.getElementById('game-wrapper');
+    const container = document.getElementById('game-container');
+    function resizeGame() {
+        const scale = Math.min(wrapper.clientWidth / 1280, wrapper.clientHeight / 720);
+        container.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', resizeGame); resizeGame();
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+        else document.exitFullscreen();
+    }
+
+    // БЛОКИРОВКА СКРОЛЛА И КОНТЕКСТНОГО МЕНЮ БРАУЗЕРА
+    window.addEventListener('keydown', e => {
+        if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
+    });
+    // Блокируем вызов меню на правую кнопку мыши, чтобы оно не мешало фонарику!
+    container.addEventListener('contextmenu', e => e.preventDefault());
+
+    // --- ЗВУК И ГРОМКОСТЬ ---
+    const bgMusic = document.getElementById('bg-music');
+    const sfxCorrect = document.getElementById('snd-correct');
+    const sfxWrong = document.getElementById('snd-wrong');
+    document.getElementById('vol').addEventListener('input', e => {
+        let v = e.target.value; bgMusic.volume = v; sfxCorrect.volume = v; sfxWrong.volume = v;
+    });
+
+    function playSfx(type) {
+        let s = type === 'correct' ? sfxCorrect : sfxWrong;
+        s.currentTime = 0; s.play();
+    }
+
+    // --- ГЛОБАЛЬНАЯ ЛОГИКА ---
+    let score = 0;
+    let currentLevel = 0;
+    let questionIndex = 0;
+    let isPaused = false;
+    let animationFrameId;
+
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+    function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function unlockGame() {
+        document.getElementById('btn-start').disabled = false;
+        document.getElementById('btn-start').innerText = "🎮 Начать игру";
+        switchScreen('screen-menu'); bgMusic.play().catch(()=>{});
+    }
+
+    function updateScore() { document.getElementById('score-display').innerText = score; }
+
+    function showError(text, callback) {
+        isPaused = true; playSfx('wrong');
+        score -= 5; updateScore(); 
+        document.getElementById('error-text').innerHTML = text;
+        showModal('modal-error');
+        window.errorCallback = callback;
+    }
+    function closeError() {
+        closeModal('modal-error'); isPaused = false;
+        if(window.errorCallback) { let cb = window.errorCallback; window.errorCallback = null; cb(); }
+    }
+
+    function showHelp() {
+        let txt = "";
+        if(currentLevel === 1) txt = "Удерживай ПРАВУЮ кнопку мыши, чтобы включить голубой фонарик и сканировать темноту. Нашел правильное слово? Кликай по нему ЛЕВОЙ кнопкой, пока держишь фонарик!";
+        if(currentLevel === 2) txt = "Используй стрелочки ⬅️ и ➡️ для движения пушки. Нажми ПРОБЕЛ, чтобы выстрелить лазером в звезду с правильным ответом.";
+        if(currentLevel === 3) txt = "Кликай по словам внизу в правильном порядке, чтобы собрать вопросительное предложение!";
+        document.getElementById('help-text').innerText = txt;
+        showModal('modal-help');
+    }
+
+    function startLevel(lvl) {
+        cancelAnimationFrame(animationFrameId); // Сброс анимаций (нет ускорения)
+        currentLevel = lvl; questionIndex = 0; isPaused = false;
+        switchScreen(`screen-level${lvl}`);
+        showHelp();
+        if(lvl === 1) initLevel1();
+        else if(lvl === 2) initLevel2();
+        else if(lvl === 3) initLevel3();
+    }
+
+    // --- УРОВЕНЬ 1: ФОНАРИК НА ПРАВУЮ КНОПКУ ---
+    const l1Data = [
+        { sub: "The boy (he) ___", correct: "reads", wrong: "read", rule: "С 'he' глагол требует -s!" },
+        { sub: "I ___ apples", correct: "like", wrong: "likes", rule: "С 'I' окончание -s не нужно!" },
+        { sub: "The cat (it) ___", correct: "jumps", wrong: "jump", rule: "С 'it' (кот) глагол получает -s!" },
+        { sub: "We ___ books", correct: "read", wrong: "reads", rule: "С 'We' окончание не нужно!" },
+        { sub: "The girl (she) ___", correct: "runs", wrong: "run", rule: "С 'she' глагол требует -s!" }
+    ];
+
+    let isRightMouseDown = false;
+    
+    // Отслеживаем нажатие правой кнопки мыши (button === 2)
+    container.addEventListener('mousedown', e => {
+        if(e.button === 2 && currentLevel === 1) { 
+            isRightMouseDown = true; updateFlashlight(e); 
+        }
+    });
+    window.addEventListener('mouseup', e => {
+        if(e.button === 2 && currentLevel === 1) { 
+            isRightMouseDown = false; updateFlashlight(e); 
+        }
+    });
+    container.addEventListener('mousemove', e => {
+        if(isRightMouseDown && currentLevel === 1) updateFlashlight(e);
+    });
+
+    function updateFlashlight(e) {
+        const overlay = document.getElementById('l1-dark-overlay');
+        if(isRightMouseDown) {
+            const rect = container.getBoundingClientRect();
+            const scale = rect.width / 1280;
+            let x = (e.clientX - rect.left) / scale;
+            let y = (e.clientY - rect.top) / scale;
+            // Делаем прозрачную дырку (фонарик голубого цвета) в темном слое
+            overlay.style.background = `radial-gradient(circle 180px at ${x}px ${y}px, rgba(0, 195, 255, 0.1) 0%, rgba(0,0,0,0.98) 70%)`;
+        } else {
+            // Если кнопка отпущена - полная темнота
+            overlay.style.background = `rgba(0,0,0,0.98)`;
+        }
+    }
+
+    function initLevel1() {
+        if(questionIndex >= 5) { setTimeout(()=>startLevel(2), 1000); return; }
+        let q = l1Data[questionIndex];
+        document.getElementById('l1-subject').innerText = q.sub;
+        
+        const canvas = document.getElementById('l1-words-container');
+        canvas.innerHTML = '';
+        
+        // Гарантируем, что слова не наложатся друг на друга (фиксированные зоны по X)
+        let words = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
+        words.forEach((word, i) => {
+            let el = document.createElement('div');
+            el.className = 'hidden-word'; el.innerText = word;
+            
+            // Левая и правая половина экрана, случайная высота
+            let rx = i === 0 ? 200 + Math.random() * 200 : 700 + Math.random() * 200;
+            let ry = 200 + Math.random() * 300;
+            
+            el.style.left = rx + 'px'; el.style.top = ry + 'px';
+            
+            el.onclick = () => {
+                // Если фонарик не горит - нажимать нельзя! (защита от слепого клика)
+                if(isPaused || !isRightMouseDown) return; 
+                
+                isRightMouseDown = false; // Сбрасываем фонарик
+                updateFlashlight(null);
+
+                if(word === q.correct) {
+                    playSfx('correct'); score++; updateScore(); questionIndex++; initLevel1();
+                } else {
+                    showError(q.rule + "<br><br>Правильный ответ: <b>" + q.correct + "</b>", () => {
+                        questionIndex++; initLevel1();
+                    });
+                }
+            };
+            canvas.appendChild(el);
+        });
+    }
+
+    // --- УРОВЕНЬ 2: ПУШКА (без ускорений) ---
+    const l2Data = [
+        { sub: "The dogs (they)", correct: "don't", wrong: ["doesn't", "dno't"], rule: "Собаки (They) используют don't." },
+        { sub: "The doctor (he)", correct: "doesn't", wrong: ["don't", "deson't"], rule: "Доктор (He) использует doesn't." },
+        { sub: "You", correct: "don't", wrong: ["doesn't", "dnot"], rule: "С 'You' используем don't." },
+        { sub: "My sister (she)", correct: "doesn't", wrong: ["don't", "dsone't"], rule: "Сестра (She) использует doesn't." },
+        { sub: "My friends (they)", correct: "don't", wrong: ["doesn't", "dont'"], rule: "Друзья (They) используют don't." }
+    ];
+
+    let l2PlayerX = 600;
+    let l2Keys = { ArrowLeft: false, ArrowRight: false, Space: false };
+    let bullet = { active: false, x: 0, y: 0 };
+    let starsData = [];
+
+    window.addEventListener('keydown', e => { if(e.code in l2Keys) l2Keys[e.code] = true; });
+    window.addEventListener('keyup', e => { if(e.code in l2Keys) l2Keys[e.code] = false; });
+
+    function initLevel2() {
+        if(questionIndex >= 5) { cancelAnimationFrame(animationFrameId); setTimeout(()=>startLevel(3), 1000); return; }
+        
+        bullet.active = false; document.getElementById('l2-laser').style.display = 'none';
+        document.getElementById('l2-subject').innerText = l2Data[questionIndex].sub;
+        
+        const container = document.getElementById('l2-stars-container');
+        container.innerHTML = ''; starsData = [];
+        
+        let q = l2Data[questionIndex];
+        let words = [q.correct, q.wrong[0], q.wrong[1]].sort(()=>Math.random() - 0.5);
+        let positions = [200, 550, 900]; // Строго 3 позиции сверху
+        
+        words.forEach((w, i) => {
+            let el = document.createElement('div');
+            el.className = 'l2-star'; el.innerText = w;
+            el.style.left = positions[i] + 'px';
+            container.appendChild(el);
+            starsData.push({ el: el, text: w, x: positions[i], y: 80, width: 180, height: 80 });
+        });
+        
+        cancelAnimationFrame(animationFrameId); // Сбрасываем прошлый цикл, чтобы скорость не росла
+        loopL2();
+    }
+
+    function loopL2() {
+        if(currentLevel !== 2 || isPaused) { animationFrameId = requestAnimationFrame(loopL2); return; }
+        
+        // Движение пушки
+        if(l2Keys.ArrowLeft) l2PlayerX -= 10;
+        if(l2Keys.ArrowRight) l2PlayerX += 10;
+        if(l2PlayerX < 0) l2PlayerX = 0;
+        if(l2PlayerX > 1200) l2PlayerX = 1200;
+        document.getElementById('l2-cannon').style.left = l2PlayerX + 'px';
+
+        // Выстрел
+        if(l2Keys.Space && !bullet.active) {
+            bullet.active = true;
+            bullet.x = l2PlayerX + 30; // Центр пушки
+            bullet.y = 580; // Начальная высота пушки
+            let bEl = document.getElementById('l2-laser');
+            bEl.style.display = 'block'; bEl.style.left = bullet.x + 'px';
+        }
+
+        // Движение лазера
+        if(bullet.active) {
+            bullet.y -= 7; 
+            let bEl = document.getElementById('l2-laser');
+            bEl.style.top = bullet.y + 'px';
+
+            // Проверка попадания по звездам
+            starsData.forEach(star => {
+                if (bullet.x < star.x + star.width && bullet.x + 20 > star.x &&
+                    bullet.y < star.y + star.height && bullet.y + 60 > star.y) {
+                    
+                    bullet.active = false; bEl.style.display = 'none';
+                    checkL2Shoot(star.text, l2Data[questionIndex]);
+                }
+            });
+
+            if(bullet.y < 0) { bullet.active = false; bEl.style.display = 'none'; }
+        }
+
+        animationFrameId = requestAnimationFrame(loopL2);
+    }
+
+    function checkL2Shoot(shotText, q) {
+        if(shotText === q.correct) {
+            playSfx('correct'); score++; updateScore(); questionIndex++;
+            setTimeout(initLevel2, 500);
+        } else {
+            let msg = `Ты подбил не ту звезду: ${shotText}. `;
+            if(q.wrong.includes(shotText) && shotText.length === q.correct.length && shotText !== q.wrong[0]) {
+                msg = `Это звезда-обманка с перепутанными буквами: ${shotText}. `;
+            }
+            showError(msg + "<br>" + q.rule + "<br>Правильный ответ: <b>" + q.correct + "</b>", () => {
+                questionIndex++; initLevel2();
+            });
+        }
+    }
+
+    // --- УРОВЕНЬ 3: КОНСТРУКТОР ПРЕДЛОЖЕНИЯ ---
+    const l3Data = [
+        { q: "Does he play chess ?", words: ["he", "play", "Does", "chess", "?"] },
+        { q: "Do they like pizza ?", words: ["like", "?", "they", "Do", "pizza"] },
+        { q: "Does she read books ?", words: ["books", "she", "?", "read", "Does"] },
+        { q: "Do we go home ?", words: ["home", "we", "Do", "?", "go"] },
+        { q: "Does it fly high ?", words: ["high", "fly", "Does", "?", "it"] }
+    ];
+
+    let l3Target = [];
+    let l3Current = [];
+
+    function initLevel3() {
+        if(questionIndex >= 5) { finishGame(); return; }
+        let currentQ = l3Data[questionIndex];
+        l3Target = currentQ.q.split(" ");
+        l3Current = [];
+        renderL3();
+    }
+
+    function renderL3() {
+        let sentContainer = document.getElementById('l3-sentence');
+        let poolContainer = document.getElementById('l3-pool');
+        sentContainer.innerHTML = ''; poolContainer.innerHTML = '';
+
+        l3Target.forEach((w, i) => {
+            let slot = document.createElement('div');
+            slot.className = 'l3-slot';
+            slot.innerText = l3Current[i] ? l3Current[i] : "___";
+            sentContainer.appendChild(slot);
+        });
+
+        let availableWords = l3Data[questionIndex].words.filter(w => !l3Current.includes(w));
+        availableWords.forEach(w => {
+            let btn = document.createElement('div');
+            btn.className = 'l3-word'; btn.innerText = w;
+            btn.onclick = () => {
+                if(isPaused) return;
+                checkL3Word(w);
+            };
+            poolContainer.appendChild(btn);
+        });
+    }
+
+    function checkL3Word(word) {
+        let expectedWord = l3Target[l3Current.length];
+        if(word === expectedWord) {
+            playSfx('correct'); l3Current.push(word); renderL3();
+            if(l3Current.length === l3Target.length) {
+                score++; updateScore(); questionIndex++;
+                setTimeout(initLevel3, 1000);
+            }
+        } else {
+            let rule = l3Target[0] === "Does" ? "Вопрос с He/She/It начинается с Does!" : "Вопрос с I/You/We/They начинается с Do!";
+            showError("Неверный порядок слов!<br>" + rule, () => {
+                l3Current = []; renderL3();
+            });
+        }
+    }
+
+    // --- ФИНАЛ ---
+    function finishGame() {
+        switchScreen('screen-end');
+        document.getElementById('final-score').innerText = score;
+        
+        let grade = "2";
+        if(score >= 13) grade = "5";
+        else if(score >= 11) grade = "4";
+        else if(score >= 8) grade = "3";
+        
+        document.getElementById('final-grade').innerText = grade;
+        if(grade === "5") document.getElementById('secret-word-btn').style.display = 'inline-block';
+    }
+</script>
+</body>
+</html>
