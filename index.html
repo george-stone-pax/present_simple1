@@ -83,13 +83,17 @@
 
         /* УРОВЕНЬ 2: ЗВЕЗДОПАД И ПУШКА */
         #l2-sky { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: #0b0c10; z-index: 1;}
-        .l2-star {
-            position: absolute; top: 150px; /* Опущено ниже */
-            width: 270px; height: 120px; /* Увеличено в 1.5 раза */
-            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,5 61,35 95,35 68,55 78,85 50,70 22,85 32,55 5,35 39,35" fill="%23f1c40f"/></svg>') no-repeat center;
-            background-size: contain; display: flex; justify-content: center; align-items: center;
-            font-size: 24px; font-weight: bold; color: #000; text-shadow: 0 0 5px #fff;
+        .l2-planet {
+            position: absolute; top: 150px; 
+            width: 180px; height: 180px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; text-align: center;
+            font-size: 28px; font-weight: bold; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            box-shadow: inset -15px -15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.1);
         }
+        .planet-0 { background: radial-gradient(circle at 30% 30%, #4facfe 0%, #00f2fe 100%); }
+        .planet-1 { background: radial-gradient(circle at 30% 30%, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%); }
+        .planet-2 { background: radial-gradient(circle at 30% 30%, #f1c40f 0%, #e67e22 100%); }
+        
         #l2-cannon {
             position: absolute; bottom: 20px; left: 600px; width: 80px; height: 100px;
             background: #45a29e; border-radius: 10px 10px 0 0; z-index: 5;
@@ -178,14 +182,14 @@
 
         <div id="screen-level1" class="screen">
             <h2 style="position: absolute; top: 20px; z-index: 10;">Уровень 1: Поиск в темноте</h2>
-            <div class="l1-hint" style="top: 80px;">Удерживай ПРАВУЮ кнопку мыши, чтобы светить фонариком!</div>
+            <div class="l1-hint" style="top: 120px;">Удерживай ПРАВУЮ кнопку мыши, чтобы светить фонариком!</div>
             <div id="l1-words-container"></div>
             <div id="l1-dark-overlay"></div>
             <div class="l1-subject" id="l1-subject"></div>
         </div>
 
         <div id="screen-level2" class="screen">
-            <h2 style="position: absolute; top: 20px; z-index: 10;">Уровень 2: Лазерная пушка (Отрицания)</h2>
+            <h2 style="position: absolute; top: 50px; z-index: 10;">Уровень 2: Лазерная пушка (Отрицания)</h2>
             <div class="l1-subject" id="l2-subject" style="bottom: 150px;"></div>
             <div id="l2-sky">
                 <div id="l2-stars-container"></div>
@@ -342,11 +346,11 @@
 
     // --- УРОВЕНЬ 1: ФОНАРИК ---
     const l1Data = [
-        { sub: "The boy (he) ___", correct: "reads", wrong: "read", rule: "С 'he' глагол требует -s!" },
-        { sub: "I ___ apples", correct: "like", wrong: "likes", rule: "С 'I' окончание -s не нужно!" },
-        { sub: "The cat (it) ___", correct: "jumps", wrong: "jump", rule: "С 'it' (кот) глагол получает -s!" },
-        { sub: "We ___ books", correct: "read", wrong: "reads", rule: "С 'We' окончание не нужно!" },
-        { sub: "The girl (she) ___", correct: "runs", wrong: "run", rule: "С 'she' глагол требует -s!" }
+        { sub: "The boy (he) ___", correct: "reads", wrong: ["read", "raeds", "reeds"], rule: "С 'he' глагол требует -s!" },
+        { sub: "I ___ apples", correct: "like", wrong: ["likes", "liek", "laike"], rule: "С 'I' окончание -s не нужно!" },
+        { sub: "The cat (it) ___", correct: "jumps", wrong: ["jump", "jumes", "jumpps"], rule: "С 'it' (кот) глагол получает -s!" },
+        { sub: "We ___ books", correct: "read", wrong: ["reads", "raed", "reds"], rule: "С 'We' окончание не нужно!" },
+        { sub: "The girl (she) ___", correct: "runs", wrong: ["run", "runes", "rns"], rule: "С 'she' глагол требует -s!" }
     ];
 
     let isRightMouseDown = false;
@@ -386,12 +390,14 @@
         const canvas = document.getElementById('l1-words-container');
         canvas.innerHTML = '';
         
-        let words = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
+        // Теперь генерируем 4 слова: 1 правильное + 3 с ошибками
+        let words = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
         words.forEach((word, i) => {
             let el = document.createElement('div');
             el.className = 'hidden-word'; el.innerText = word;
             
-            let rx = i === 0 ? 200 + Math.random() * 200 : 700 + Math.random() * 200;
+            // Равномерно распределяем 4 слова по экрану (чтобы не накладывались)
+            let rx = 50 + i * 280 + Math.random() * 80;
             let ry = 200 + Math.random() * 300;
             
             el.style.left = rx + 'px'; el.style.top = ry + 'px';
@@ -442,15 +448,17 @@
         
         let q = l2Data[questionIndex];
         let words = [q.correct, q.wrong[0], q.wrong[1]].sort(()=>Math.random() - 0.5);
-        // Обновленные координаты для увеличенных звезд (ширина 270)
-        let positions = [150, 505, 860]; 
+        
+        let positions = [150, 550, 950]; // Новые позиции для круглых планет
+        let planetClasses = ['planet-0', 'planet-1', 'planet-2'].sort(()=>Math.random() - 0.5); // Рандомизируем цвета планет
         
         words.forEach((w, i) => {
             let el = document.createElement('div');
-            el.className = 'l2-star'; el.innerText = w;
+            el.className = 'l2-planet ' + planetClasses[i];
+            el.innerText = w;
             el.style.left = positions[i] + 'px';
             container.appendChild(el);
-            starsData.push({ el: el, text: w, x: positions[i], y: 150, width: 270, height: 120 });
+            starsData.push({ el: el, text: w, x: positions[i], y: 150, width: 180, height: 180 });
         });
         
         cancelAnimationFrame(animationFrameId);
