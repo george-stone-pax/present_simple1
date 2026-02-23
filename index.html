@@ -65,7 +65,7 @@
         .modal-content h3 { font-size: 34px; color: #d9534f; margin-top: 0; }
         .modal-content p { font-size: 24px; font-weight: bold; }
 
-        /* УРОВЕНЬ 1: ФОНАРИК (НОВЫЙ НАДЕЖНЫЙ МЕТОД) */
+        /* УРОВЕНЬ 1: ФОНАРИК */
         #l1-words-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
         }
@@ -73,19 +73,19 @@
             position: absolute; font-size: 45px; font-weight: bold; color: #66fcf1;
             cursor: pointer; padding: 20px; text-shadow: 0 0 15px #45a29e;
         }
-        /* Тьма, которая перекрывает слова. Pointer-events: none позволяет кликать сквозь неё */
         #l1-dark-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98); z-index: 3; pointer-events: none;
             transition: background 0.1s;
         }
         .l1-subject { position: absolute; bottom: 40px; width: 100%; text-align: center; font-size: 40px; font-weight: bold; z-index: 5; color: #fff;}
-        .l1-hint { position: absolute; top: 140px; width: 100%; text-align: center; font-size: 22px; color: #4ade80; z-index: 5;}
+        .l1-hint { position: absolute; width: 100%; text-align: center; font-size: 22px; color: #4ade80; z-index: 5;}
 
         /* УРОВЕНЬ 2: ЗВЕЗДОПАД И ПУШКА */
         #l2-sky { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: #0b0c10; z-index: 1;}
         .l2-star {
-            position: absolute; top: 80px; width: 180px; height: 80px;
+            position: absolute; top: 150px; /* Опущено ниже */
+            width: 270px; height: 120px; /* Увеличено в 1.5 раза */
             background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,5 61,35 95,35 68,55 78,85 50,70 22,85 32,55 5,35 39,35" fill="%23f1c40f"/></svg>') no-repeat center;
             background-size: contain; display: flex; justify-content: center; align-items: center;
             font-size: 24px; font-weight: bold; color: #000; text-shadow: 0 0 5px #fff;
@@ -103,10 +103,16 @@
         /* УРОВЕНЬ 3: СБОРКА ПРЕДЛОЖЕНИЯ */
         #l3-workspace { display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 5;}
         #l3-sentence {
-            display: flex; gap: 15px; margin-top: 100px; margin-bottom: 50px;
+            display: flex; gap: 15px; margin-top: 60px; margin-bottom: 50px;
             min-height: 80px; padding: 20px; border-bottom: 3px dashed #45a29e; width: 800px; justify-content: center;
         }
-        .l3-slot { font-size: 34px; font-weight: bold; color: #66fcf1; padding: 10px 20px; background: rgba(69, 162, 158, 0.2); border-radius: 10px;}
+        .l3-slot { font-size: 34px; font-weight: bold; color: #66fcf1; padding: 10px 20px; background: rgba(69, 162, 158, 0.2); border-radius: 10px; transition: 0.2s;}
+        
+        /* Класс для заполненного слота на 3 уровне (для возврата слова) */
+        .l3-slot.filled { cursor: pointer; background: rgba(69, 162, 158, 0.6); border: 2px solid #66fcf1; color: #fff; }
+        .l3-slot.filled:hover { background: #d9534f; border-color: #d9534f; transform: scale(0.95); }
+        .l3-slot.filled:hover::after { content: " ❌"; font-size: 20px; }
+
         #l3-pool { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 800px;}
         .l3-word {
             font-size: 30px; padding: 15px 30px; background: #1f2833; border: 2px solid #66fcf1;
@@ -137,9 +143,6 @@
     })();
 </script>
 
-<!-- ========================================== -->
-<!-- ВСТАВЛЯТЬ ССЫЛКИ НА АУДИО ИЗ GITHUB PAGES СЮДА: -->
-<!-- ========================================== -->
 <audio id="bg-music" src="https://george-stone-pax.github.io/my-game-assets/Aylex%20-%20Back%20To%20Life%20(freetouse.com).mp3" loop></audio>
 <audio id="snd-correct" src="https://george-stone-pax.github.io/my-game-assets/rightanswer-95219.mp3"></audio>
 <audio id="snd-wrong" src="https://george-stone-pax.github.io/my-game-assets/dodgeball.mp3"></audio>
@@ -174,15 +177,15 @@
         </div>
 
         <div id="screen-level1" class="screen">
-            <h2 style="position: absolute; top: 80px; z-index: 10;">Уровень 1: Поиск в темноте</h2>
-            <div class="l1-hint">Удерживай ПРАВУЮ кнопку мыши, чтобы светить фонариком!</div>
+            <h2 style="position: absolute; top: 20px; z-index: 10;">Уровень 1: Поиск в темноте</h2>
+            <div class="l1-hint" style="top: 80px;">Удерживай ПРАВУЮ кнопку мыши, чтобы светить фонариком!</div>
             <div id="l1-words-container"></div>
             <div id="l1-dark-overlay"></div>
             <div class="l1-subject" id="l1-subject"></div>
         </div>
 
         <div id="screen-level2" class="screen">
-            <h2 style="position: absolute; top: 80px; z-index: 10;">Уровень 2: Лазерная пушка (Отрицания)</h2>
+            <h2 style="position: absolute; top: 20px; z-index: 10;">Уровень 2: Лазерная пушка (Отрицания)</h2>
             <div class="l1-subject" id="l2-subject" style="bottom: 150px;"></div>
             <div id="l2-sky">
                 <div id="l2-stars-container"></div>
@@ -192,7 +195,7 @@
         </div>
 
         <div id="screen-level3" class="screen">
-            <h2 style="position: absolute; top: 80px; z-index: 10;">Уровень 3: Конструктор вопросов</h2>
+            <h2 style="position: absolute; top: 20px; z-index: 10;">Уровень 3: Конструктор вопросов</h2>
             <div id="l3-workspace">
                 <div id="l3-sentence"></div>
                 <div id="l3-pool"></div>
@@ -214,7 +217,7 @@
             <div class="modal-content">
                 <h3>Ошибка! ❌</h3>
                 <p id="error-text"></p>
-                <p style="color: red; font-size: 20px;">Штраф: -5 баллов</p>
+                <p style="color: red; font-size: 20px; margin-top: 15px;">Штраф: -5 баллов</p>
                 <button onclick="closeError()">Продолжить</button>
             </div>
         </div>
@@ -235,7 +238,6 @@
         <div id="modal-secret" class="modal-overlay">
             <div class="modal-content">
                 <h3>Награда! 🏆</h3>
-                <!-- ИЗМЕНЕННОЕ СЕКРЕТНОЕ СЛОВО -->
                 <p style="font-size: 50px; color: #8e44ad; margin: 10px 0;">Sofa - Диван</p>
                 <button onclick="closeModal('modal-secret')">Супер!</button>
             </div>
@@ -271,7 +273,6 @@
     window.addEventListener('keydown', e => {
         if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
     });
-    // Блокируем вызов меню на правую кнопку мыши, чтобы оно не мешало фонарику!
     container.addEventListener('contextmenu', e => e.preventDefault());
 
     // --- ЗВУК И ГРОМКОСТЬ ---
@@ -324,13 +325,13 @@
         let txt = "";
         if(currentLevel === 1) txt = "Удерживай ПРАВУЮ кнопку мыши, чтобы включить голубой фонарик и сканировать темноту. Нашел правильное слово? Кликай по нему ЛЕВОЙ кнопкой, пока держишь фонарик!";
         if(currentLevel === 2) txt = "Используй стрелочки ⬅️ и ➡️ для движения пушки. Нажми ПРОБЕЛ, чтобы выстрелить лазером в звезду с правильным ответом.";
-        if(currentLevel === 3) txt = "Кликай по словам внизу в правильном порядке, чтобы собрать вопросительное предложение!";
+        if(currentLevel === 3) txt = "Кликай по словам внизу, чтобы перенести их в предложение. Если передумал — кликни на слово в предложении, и оно вернется обратно. Ошибка засчитается только после того, как заполнены все пропуски!";
         document.getElementById('help-text').innerText = txt;
         showModal('modal-help');
     }
 
     function startLevel(lvl) {
-        cancelAnimationFrame(animationFrameId); // Сброс анимаций (нет ускорения)
+        cancelAnimationFrame(animationFrameId);
         currentLevel = lvl; questionIndex = 0; isPaused = false;
         switchScreen(`screen-level${lvl}`);
         showHelp();
@@ -339,7 +340,7 @@
         else if(lvl === 3) initLevel3();
     }
 
-    // --- УРОВЕНЬ 1: ФОНАРИК НА ПРАВУЮ КНОПКУ ---
+    // --- УРОВЕНЬ 1: ФОНАРИК ---
     const l1Data = [
         { sub: "The boy (he) ___", correct: "reads", wrong: "read", rule: "С 'he' глагол требует -s!" },
         { sub: "I ___ apples", correct: "like", wrong: "likes", rule: "С 'I' окончание -s не нужно!" },
@@ -350,7 +351,6 @@
 
     let isRightMouseDown = false;
     
-    // Отслеживаем нажатие правой кнопки мыши (button === 2)
     container.addEventListener('mousedown', e => {
         if(e.button === 2 && currentLevel === 1) { 
             isRightMouseDown = true; updateFlashlight(e); 
@@ -372,10 +372,8 @@
             const scale = rect.width / 1280;
             let x = (e.clientX - rect.left) / scale;
             let y = (e.clientY - rect.top) / scale;
-            // Делаем прозрачную дырку (фонарик голубого цвета) в темном слое
             overlay.style.background = `radial-gradient(circle 180px at ${x}px ${y}px, rgba(0, 195, 255, 0.1) 0%, rgba(0,0,0,0.98) 70%)`;
         } else {
-            // Если кнопка отпущена - полная темнота
             overlay.style.background = `rgba(0,0,0,0.98)`;
         }
     }
@@ -388,23 +386,20 @@
         const canvas = document.getElementById('l1-words-container');
         canvas.innerHTML = '';
         
-        // Гарантируем, что слова не наложатся друг на друга (фиксированные зоны по X)
         let words = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
         words.forEach((word, i) => {
             let el = document.createElement('div');
             el.className = 'hidden-word'; el.innerText = word;
             
-            // Левая и правая половина экрана, случайная высота
             let rx = i === 0 ? 200 + Math.random() * 200 : 700 + Math.random() * 200;
             let ry = 200 + Math.random() * 300;
             
             el.style.left = rx + 'px'; el.style.top = ry + 'px';
             
             el.onclick = () => {
-                // Если фонарик не горит - нажимать нельзя! (защита от слепого клика)
                 if(isPaused || !isRightMouseDown) return; 
                 
-                isRightMouseDown = false; // Сбрасываем фонарик
+                isRightMouseDown = false;
                 updateFlashlight(null);
 
                 if(word === q.correct) {
@@ -419,7 +414,7 @@
         });
     }
 
-    // --- УРОВЕНЬ 2: ПУШКА (без ускорений) ---
+    // --- УРОВЕНЬ 2: ПУШКА ---
     const l2Data = [
         { sub: "The dogs (they)", correct: "don't", wrong: ["doesn't", "dno't"], rule: "Собаки (They) используют don't." },
         { sub: "The doctor (he)", correct: "doesn't", wrong: ["don't", "deson't"], rule: "Доктор (He) использует doesn't." },
@@ -447,46 +442,43 @@
         
         let q = l2Data[questionIndex];
         let words = [q.correct, q.wrong[0], q.wrong[1]].sort(()=>Math.random() - 0.5);
-        let positions = [200, 550, 900]; // Строго 3 позиции сверху
+        // Обновленные координаты для увеличенных звезд (ширина 270)
+        let positions = [150, 505, 860]; 
         
         words.forEach((w, i) => {
             let el = document.createElement('div');
             el.className = 'l2-star'; el.innerText = w;
             el.style.left = positions[i] + 'px';
             container.appendChild(el);
-            starsData.push({ el: el, text: w, x: positions[i], y: 80, width: 180, height: 80 });
+            starsData.push({ el: el, text: w, x: positions[i], y: 150, width: 270, height: 120 });
         });
         
-        cancelAnimationFrame(animationFrameId); // Сбрасываем прошлый цикл, чтобы скорость не росла
+        cancelAnimationFrame(animationFrameId);
         loopL2();
     }
 
     function loopL2() {
         if(currentLevel !== 2 || isPaused) { animationFrameId = requestAnimationFrame(loopL2); return; }
         
-        // Движение пушки
         if(l2Keys.ArrowLeft) l2PlayerX -= 10;
         if(l2Keys.ArrowRight) l2PlayerX += 10;
         if(l2PlayerX < 0) l2PlayerX = 0;
         if(l2PlayerX > 1200) l2PlayerX = 1200;
         document.getElementById('l2-cannon').style.left = l2PlayerX + 'px';
 
-        // Выстрел
         if(l2Keys.Space && !bullet.active) {
             bullet.active = true;
-            bullet.x = l2PlayerX + 30; // Центр пушки
-            bullet.y = 580; // Начальная высота пушки
+            bullet.x = l2PlayerX + 30;
+            bullet.y = 580;
             let bEl = document.getElementById('l2-laser');
             bEl.style.display = 'block'; bEl.style.left = bullet.x + 'px';
         }
 
-        // Движение лазера
         if(bullet.active) {
             bullet.y -= 7; 
             let bEl = document.getElementById('l2-laser');
             bEl.style.top = bullet.y + 'px';
 
-            // Проверка попадания по звездам
             starsData.forEach(star => {
                 if (bullet.x < star.x + star.width && bullet.x + 20 > star.x &&
                     bullet.y < star.y + star.height && bullet.y + 60 > star.y) {
@@ -517,13 +509,13 @@
         }
     }
 
-    // --- УРОВЕНЬ 3: КОНСТРУКТОР ПРЕДЛОЖЕНИЯ ---
+    // --- УРОВЕНЬ 3: КОНСТРУКТОР ПРЕДЛОЖЕНИЯ (ОБНОВЛЕННЫЙ) ---
     const l3Data = [
-        { q: "Does he play chess ?", words: ["he", "play", "Does", "chess", "?"] },
-        { q: "Do they like pizza ?", words: ["like", "?", "they", "Do", "pizza"] },
-        { q: "Does she read books ?", words: ["books", "she", "?", "read", "Does"] },
-        { q: "Do we go home ?", words: ["home", "we", "Do", "?", "go"] },
-        { q: "Does it fly high ?", words: ["high", "fly", "Does", "?", "it"] }
+        { q: "Does he play chess ?", words: ["he", "play", "Does", "chess", "?"], rule: "Для местоимения <b>he</b> в вопросе всегда используем <b>Does</b>." },
+        { q: "Do they like pizza ?", words: ["like", "?", "they", "Do", "pizza"], rule: "Для местоимения <b>they</b> в вопросе всегда используем <b>Do</b>." },
+        { q: "Does she read books ?", words: ["books", "she", "?", "read", "Does"], rule: "Для местоимения <b>she</b> в вопросе всегда используем <b>Does</b>." },
+        { q: "Do we go home ?", words: ["home", "we", "Do", "?", "go"], rule: "Для местоимения <b>we</b> в вопросе всегда используем <b>Do</b>." },
+        { q: "Does it fly high ?", words: ["high", "fly", "Does", "?", "it"], rule: "Для местоимения <b>it</b> в вопросе всегда используем <b>Does</b>." }
     ];
 
     let l3Target = [];
@@ -542,38 +534,86 @@
         let poolContainer = document.getElementById('l3-pool');
         sentContainer.innerHTML = ''; poolContainer.innerHTML = '';
 
-        l3Target.forEach((w, i) => {
+        // Отрисовка слотов предложения
+        for(let i=0; i<l3Target.length; i++) {
             let slot = document.createElement('div');
             slot.className = 'l3-slot';
-            slot.innerText = l3Current[i] ? l3Current[i] : "___";
+            
+            if(l3Current[i]) {
+                slot.classList.add('filled');
+                slot.innerText = l3Current[i];
+                // Функция ВОЗВРАТА слова обратно
+                slot.onclick = () => {
+                    if(isPaused) return;
+                    l3Current.splice(i, 1); // Удаляем слово из предложения
+                    renderL3(); // Перерисовываем
+                };
+            } else {
+                slot.innerText = "___";
+            }
             sentContainer.appendChild(slot);
+        }
+
+        // Подготовка пула доступных слов
+        let availableWords = [...l3Data[questionIndex].words];
+        l3Current.forEach(w => {
+            let idx = availableWords.indexOf(w);
+            if(idx > -1) availableWords.splice(idx, 1); // Убираем слова, которые уже в предложении
         });
 
-        let availableWords = l3Data[questionIndex].words.filter(w => !l3Current.includes(w));
+        // Отрисовка пула слов
         availableWords.forEach(w => {
             let btn = document.createElement('div');
             btn.className = 'l3-word'; btn.innerText = w;
             btn.onclick = () => {
                 if(isPaused) return;
-                checkL3Word(w);
+                if(l3Current.length < l3Target.length) {
+                    l3Current.push(w); // Добавляем в предложение
+                    renderL3();
+                    checkL3Completion(); // Проверяем, если собрали полностью
+                }
             };
             poolContainer.appendChild(btn);
         });
     }
 
-    function checkL3Word(word) {
-        let expectedWord = l3Target[l3Current.length];
-        if(word === expectedWord) {
-            playSfx('correct'); l3Current.push(word); renderL3();
-            if(l3Current.length === l3Target.length) {
-                score++; updateScore(); questionIndex++;
+    function checkL3Completion() {
+        // Проверяем ошибку только когда заполнены все слоты!
+        if(l3Current.length === l3Target.length) {
+            let expected = l3Target.join(" ");
+            let actual = l3Current.join(" ");
+            
+            if(actual === expected) {
+                playSfx('correct'); score++; updateScore(); questionIndex++;
                 setTimeout(initLevel3, 1000);
+            } else {
+                let currentQ = l3Data[questionIndex];
+                // Улучшенное, качественное окно объяснения ошибки
+                let errorMsg = `
+                    <div style="font-size:22px; line-height: 1.6;">
+                        <p style="margin: 0;">Ваш ответ:</p>
+                        <p style="color:#d9534f; font-weight:bold; margin-top: 5px;">${actual}</p>
+                        
+                        <p style="margin: 0; margin-top: 15px;">Правильный ответ:</p>
+                        <p style="color:#4ade80; font-weight:bold; margin-top: 5px;">${expected}</p>
+                        
+                        <hr style="border-color:#45a29e; margin: 20px 0;">
+                        
+                        <p style="text-align:left; font-size: 20px;">
+                            <b>Формула вопроса:</b><br> 
+                            <span style="color:#66fcf1">Do / Does</span> + <span style="color:#f1c40f">Кто/Что</span> + <span style="color:#fff">Действие</span> + остальное + <span style="color:#66fcf1">?</span>
+                        </p>
+                        <p style="text-align:left; font-size: 20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                            💡 ${currentQ.rule}
+                        </p>
+                    </div>
+                `;
+                
+                showError(errorMsg, () => {
+                    l3Current = []; // Сбрасываем предложение после ошибки
+                    renderL3();
+                });
             }
-        } else {
-            let rule = l3Target[0] === "Does" ? "Вопрос с He/She/It начинается с Does!" : "Вопрос с I/You/We/They начинается с Do!";
-            showError("Неверный порядок слов!<br>" + rule, () => {
-                l3Current = []; renderL3();
-            });
         }
     }
 
