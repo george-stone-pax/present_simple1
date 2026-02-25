@@ -53,74 +53,78 @@
         .controls { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 10px; border: 1px solid #45a29e; }
         .controls input[type=range] { cursor: pointer; }
 
+        /* === ТЕОРИЯ (Новые красивые стили) === */
+        #screen-theory { justify-content: flex-start; padding-top: 30px; }
+        .theory-cards-container {
+            display: flex; gap: 20px; justify-content: center; align-items: stretch;
+            width: 95%; max-width: 1200px; margin-top: 10px;
+        }
+        .theory-card {
+            flex: 1; background: rgba(11, 12, 16, 0.85); border: 2px solid #45a29e;
+            border-radius: 15px; padding: 20px; text-align: left;
+            box-shadow: 0 0 15px rgba(69, 162, 158, 0.3);
+            display: flex; flex-direction: column;
+        }
+        .theory-card h3 {
+            margin-top: 0; font-size: 28px; text-align: center; border-bottom: 2px dashed #45a29e;
+            padding-bottom: 10px; margin-bottom: 15px;
+        }
+        .t-pos h3 { color: #4ade80; } /* Утверждение - зеленое */
+        .t-neg h3 { color: #ff4757; } /* Отрицание - красное */
+        .t-que h3 { color: #f1c40f; } /* Вопрос - желтое */
+        
+        .theory-formula {
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px;
+            font-size: 19px; margin-bottom: 15px; border-left: 4px solid;
+            line-height: 1.4; font-weight: bold; text-align: center;
+        }
+        .t-pos .theory-formula { border-color: #4ade80; }
+        .t-neg .theory-formula { border-color: #ff4757; }
+        .t-que .theory-formula { border-color: #f1c40f; }
+
+        .theory-text { font-size: 18px; line-height: 1.5; color: #c5c6c7; flex-grow: 1; }
+        .theory-text ul { padding-left: 20px; margin: 10px 0; }
+        .theory-text li { margin-bottom: 10px; }
+        
+        .hl-pronoun { color: #f1c40f; font-weight: bold; } /* I, You, He... */
+        .hl-verb { color: #4ade80; font-weight: bold; } /* play, reads... */
+        .hl-helper { color: #66fcf1; font-weight: bold; } /* Do, Does, don't... */
+        .hl-s { background: #d9534f; color: #fff; padding: 0 4px; border-radius: 4px; } /* окончание -s */
+
         /* Модальные окна */
         .modal-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 200;
         }
         .modal-content {
-            background: #c5c6c7; color: #0b0c10; padding: 40px; border-radius: 15px;
+            background: #1f2833; color: #fff; padding: 40px; border-radius: 15px;
             text-align: center; max-width: 650px; border: 4px solid #45a29e;
+            box-shadow: 0 0 30px rgba(69, 162, 158, 0.5);
         }
-        .modal-content h3 { font-size: 34px; color: #d9534f; margin-top: 0; }
-        .modal-content p { font-size: 24px; font-weight: bold; }
+        .modal-content h3 { font-size: 34px; color: #ff4757; margin-top: 0; }
+        .modal-content p { font-size: 24px; font-weight: normal; }
 
         /* УРОВЕНЬ 1: ФОНАРИК */
-        #l1-words-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
-        }
+        #l1-words-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
         .hidden-word {
             position: absolute; font-size: 45px; font-weight: bold; color: #66fcf1;
             cursor: pointer; padding: 20px; text-shadow: 0 0 15px #45a29e;
         }
         #l1-dark-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 3; pointer-events: none;
-            transition: background 0.1s;
+            background: rgba(0,0,0,0.98); z-index: 3; pointer-events: none; transition: background 0.1s;
         }
         .l1-subject { position: absolute; bottom: 40px; width: 100%; text-align: center; font-size: 40px; font-weight: bold; z-index: 5; color: #fff;}
         .l1-hint { position: absolute; width: 100%; text-align: center; font-size: 22px; color: #4ade80; z-index: 5;}
 
         /* УРОВЕНЬ 2: ЗВЕЗДОПАД И ПУШКА */
         #l2-sky { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background: #0b0c10; z-index: 1;}
-        
-        /* 3D Планеты с вращающейся текстурой */
-        .l2-planet {
-            position: absolute; top: 150px; 
-            width: 220px; height: 220px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; text-align: center;
-            font-size: 28px; font-weight: bold; color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.9);
-            /* Внутренняя тень создает объем, внешняя тень - легкое атмосферное свечение */
-            box-shadow: inset -25px -25px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.1);
-            overflow: hidden; z-index: 2;
+        .l2-star {
+            position: absolute; top: 150px; width: 270px; height: 120px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,5 61,35 95,35 68,55 78,85 50,70 22,85 32,55 5,35 39,35" fill="%23f1c40f"/></svg>') no-repeat center;
+            background-size: contain; display: flex; justify-content: center; align-items: center;
+            font-size: 24px; font-weight: bold; color: #000; text-shadow: 0 0 5px #fff;
         }
-        .l2-planet::before {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            z-index: -1; animation: rotateBg 40s linear infinite;
-        }
-        @keyframes rotateBg { 100% { transform: rotate(360deg); } }
-
-        /* Газовый гигант (Полосатый) */
-        .planet-0::before {
-            background: repeating-linear-gradient(45deg, #d35400 0%, #e67e22 10%, #f39c12 20%, #d35400 30%);
-        }
-        /* Планета Земного типа (Океан и материки) */
-        .planet-1::before {
-            background: radial-gradient(circle at 30% 40%, #2ecc71 20%, transparent 22%),
-                        radial-gradient(circle at 70% 60%, #2ecc71 25%, transparent 27%),
-                        radial-gradient(circle at 40% 80%, #2ecc71 15%, transparent 17%),
-                        radial-gradient(circle at 80% 30%, #2ecc71 18%, transparent 20%),
-                        #2980b9;
-        }
-        /* Мертвая луна (Серые кратеры) */
-        .planet-2::before {
-            background: radial-gradient(circle at 20% 30%, #7f8c8d 10%, transparent 12%),
-                        radial-gradient(circle at 60% 70%, #7f8c8d 15%, transparent 17%),
-                        radial-gradient(circle at 70% 20%, #7f8c8d 8%, transparent 10%),
-                        radial-gradient(circle at 30% 80%, #7f8c8d 12%, transparent 14%),
-                        #bdc3c7;
-        }
-
         #l2-cannon {
             position: absolute; bottom: 20px; left: 600px; width: 80px; height: 100px;
             background: #45a29e; border-radius: 10px 10px 0 0; z-index: 5;
@@ -139,14 +143,13 @@
         }
         .l3-slot { font-size: 34px; font-weight: bold; color: #66fcf1; padding: 10px 20px; background: rgba(69, 162, 158, 0.2); border-radius: 10px; transition: 0.2s;}
         
-        /* Класс для заполненного слота на 3 уровне (для возврата слова) */
         .l3-slot.filled { cursor: pointer; background: rgba(69, 162, 158, 0.6); border: 2px solid #66fcf1; color: #fff; }
-        .l3-slot.filled:hover { background: #d9534f; border-color: #d9534f; transform: scale(0.95); }
+        .l3-slot.filled:hover { background: #ff4757; border-color: #ff4757; transform: scale(0.95); }
         .l3-slot.filled:hover::after { content: " ❌"; font-size: 20px; }
 
         #l3-pool { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 800px;}
         .l3-word {
-            font-size: 30px; padding: 15px 30px; background: #1f2833; border: 2px solid #66fcf1;
+            font-size: 30px; padding: 15px 30px; background: #0b0c10; border: 2px solid #66fcf1;
             border-radius: 15px; cursor: pointer; transition: 0.2s; color: #fff;
         }
         .l3-word:hover { background: #45a29e; transform: scale(1.1); }
@@ -161,18 +164,14 @@
         const allowedDomains = ['stepik.org', 'welcome.stepik.org'];
         const referrer = document.referrer;
         const isLocal = window.location.protocol === 'file:';
-        
-        const isInsideStepik = allowedDomains.some(domain => referrer.includes(domain));
-        
-        if (!isInsideStepik && !isLocal) {
+        if (!allowedDomains.some(domain => referrer.includes(domain)) && !isLocal) {
             document.body.innerHTML = `
                 <div style="background:#000; color:#fff; height:100vh; display:flex;
-                            flex-direction:column; align-items:center; justify-content:center;
-                            font-family:sans-serif; text-align:center; padding:20px;">
+                           flex-direction:column; align-items:center; justify-content:center;
+                           font-family:sans-serif; text-align:center; padding:20px;">
                     <h1>⛔️ Доступ ограничен</h1>
-                    <p>Эта игра — часть платного курса. <br>
-                    Пожалуйста, вернитесь к обучению на Stepik.</p>
-                    <a href="https://stepik.org" style="color:#4ade80;">Перейти к курсу</a>
+                    <p>Эта игра — часть платного курса. <br>Пожалуйста, вернитесь к обучению на Stepik.</p>
+                    <a href="https://stepik.org" style="color:#4ade80; margin-top:20px; font-size:20px;">Перейти к курсу</a>
                 </div>`;
             window.stop();
         }
@@ -198,30 +197,86 @@
 
         <div id="screen-menu" class="screen active">
             <h1>Present Simple</h1>
-            <button onclick="switchScreen('screen-theory')">📚 Теория</button>
+            <button onclick="switchScreen('screen-theory')">📚 Теория и Секреты</button>
             <button id="btn-start" disabled onclick="startLevel(1)">🎮 Начать игру 🔒</button>
         </div>
 
+        <!-- === НОВЫЙ КРАСИВЫЙ ЭКРАН ТЕОРИИ === -->
         <div id="screen-theory" class="screen">
-            <h2>Правила Present Simple</h2>
-            <div style="background: rgba(0,0,0,0.6); padding: 30px; border-radius: 15px; max-width: 800px; text-align: left; font-size: 22px;">
-                <p><b>Утверждения:</b> I, you, we, they — обычный глагол (<i>I play</i>). He, she, it — глагол с окончанием <b>-s</b> (<i>He plays</i>).</p>
-                <p><b>Отрицания:</b> Используем <b>don't</b> или <b>doesn't</b>. У глагола убирается окончание -s!</p>
-                <p><b>Вопросы:</b> В начало ставим <b>Do</b> или <b>Does</b>.</p>
+            <h2 style="font-size: 45px; text-shadow: 0 0 10px #66fcf1; color: #fff; margin-bottom: 5px;">Секреты Present Simple</h2>
+            <p style="font-size: 20px; color: #4ade80; margin-top: 0; margin-bottom: 15px;">Внимательно изучи формулы, чтобы победить на всех уровнях!</p>
+            
+            <div class="theory-cards-container">
+                <!-- КАРТОЧКА 1: УТВЕРЖДЕНИЯ -->
+                <div class="theory-card t-pos">
+                    <h3>✅ Утверждения</h3>
+                    <div class="theory-formula">
+                        <span class="hl-pronoun">Кто</span> + <span class="hl-verb">Действие</span> + остальное
+                    </div>
+                    <div class="theory-text">
+                        <ul>
+                            <li>Для <span class="hl-pronoun">I, You, We, They</span> используем обычный глагол из словаря.<br>
+                                <i>Пример: I <span class="hl-verb">play</span> chess.</i>
+                            </li>
+                            <li style="margin-top: 15px;">Для <span class="hl-pronoun">He, She, It</span> <b>ОБЯЗАТЕЛЬНО</b> добавляем к глаголу окончание <span class="hl-s">-s</span>.<br>
+                                <i>Пример: He <span class="hl-verb">play<span class="hl-s">s</span></span> chess.</i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- КАРТОЧКА 2: ОТРИЦАНИЯ -->
+                <div class="theory-card t-neg">
+                    <h3>❌ Отрицания</h3>
+                    <div class="theory-formula">
+                        <span class="hl-pronoun">Кто</span> + <span class="hl-helper">don't / doesn't</span> + <span class="hl-verb">Действие</span>
+                    </div>
+                    <div class="theory-text">
+                        <ul>
+                            <li>С <span class="hl-pronoun">I, You, We, They</span> ставим помощника <span class="hl-helper">don't</span>.<br>
+                                <i>Пример: They <span class="hl-helper">don't</span> <span class="hl-verb">play</span>.</i>
+                            </li>
+                            <li style="margin-top: 15px;">С <span class="hl-pronoun">He, She, It</span> ставим <span class="hl-helper">doesn't</span>.<br>
+                                ⚠️ <b>Внимание:</b> Жадный <span class="hl-helper">doesn't</span> забирает окончание <span class="hl-s">-s</span> у глагола!<br>
+                                <i>Пример: She <span class="hl-helper">doesn't</span> <span class="hl-verb">play</span>. (без -s!)</i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- КАРТОЧКА 3: ВОПРОСЫ -->
+                <div class="theory-card t-que">
+                    <h3>❓ Вопросы</h3>
+                    <div class="theory-formula">
+                        <span class="hl-helper">Do / Does</span> + <span class="hl-pronoun">Кто</span> + <span class="hl-verb">Действие</span> + ?
+                    </div>
+                    <div class="theory-text">
+                        <ul>
+                            <li>Слова-помощники всегда прыгают в самое <b>начало</b>!</li>
+                            <li style="margin-top: 10px;"><span class="hl-helper">Do</span> 👉 для <span class="hl-pronoun">I, You, We, They</span><br>
+                                <i><span class="hl-helper">Do</span> you <span class="hl-verb">like</span> pizza?</i>
+                            </li>
+                            <li style="margin-top: 10px;"><span class="hl-helper">Does</span> 👉 для <span class="hl-pronoun">He, She, It</span> (и он снова забирает -s у глагола).<br>
+                                <i><span class="hl-helper">Does</span> he <span class="hl-verb">read</span>?</i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <button onclick="unlockGame()" style="margin-top: 30px;">Понятно!</button>
+
+            <button onclick="unlockGame()" style="margin-top: 25px; padding: 15px 50px; font-size: 28px;">Я всё понял! В бой!</button>
         </div>
 
         <div id="screen-level1" class="screen">
             <h2 style="position: absolute; top: 20px; z-index: 10;">Уровень 1: Поиск в темноте</h2>
-            <div class="l1-hint" style="top: 120px;">Удерживай ПРАВУЮ кнопку мыши, чтобы светить фонариком!</div>
+            <div class="l1-hint" style="top: 80px;">Удерживай ПРАВУЮ кнопку мыши, чтобы светить фонариком!</div>
             <div id="l1-words-container"></div>
             <div id="l1-dark-overlay"></div>
             <div class="l1-subject" id="l1-subject"></div>
         </div>
 
         <div id="screen-level2" class="screen">
-            <h2 style="position: absolute; top: 50px; z-index: 10;">Уровень 2: Лазерная пушка (Отрицания)</h2>
+            <h2 style="position: absolute; top: 20px; z-index: 10;">Уровень 2: Лазерная пушка (Отрицания)</h2>
             <div class="l1-subject" id="l2-subject" style="bottom: 150px;"></div>
             <div id="l2-sky">
                 <div id="l2-stars-container"></div>
@@ -241,7 +296,7 @@
         <div id="screen-end" class="screen">
             <h1>Игра окончена!</h1>
             <h2>Оценка: <span id="final-grade" style="color: #f1c40f; font-size: 80px;"></span></h2>
-            <p style="font-size: 30px;">Набрано баллов: <span id="final-score">0</span> из 24.</p>
+            <p style="font-size: 30px;">Набрано баллов: <span id="final-score">0</span> из 15.</p>
             <div>
                 <button onclick="showModal('modal-criteria')">Критерии оценки</button>
                 <button id="secret-word-btn" onclick="showModal('modal-secret')">🗝️ Показать СЕКРЕТНОЕ СЛОВО</button>
@@ -252,20 +307,20 @@
         <div id="modal-error" class="modal-overlay">
             <div class="modal-content">
                 <h3>Ошибка! ❌</h3>
-                <p id="error-text"></p>
-                <!-- Штраф убран -->
-                <button style="margin-top: 20px;" onclick="closeError()">Продолжить</button>
+                <div id="error-text"></div>
+                <p style="color: #ff4757; font-size: 20px; margin-top: 20px; font-weight: bold;">Штраф: -5 баллов</p>
+                <button onclick="closeError()">Продолжить</button>
             </div>
         </div>
 
         <div id="modal-criteria" class="modal-overlay">
             <div class="modal-content">
-                <h3>Критерии оценки</h3>
-                <p style="text-align: left; font-size: 20px;">
-                    «5»: 21–24 баллов (85-100%)<br>
-                    «4»: 17–20 баллов (70-84%)<br>
-                    «3»: 12–16 баллов (50-69%)<br>
-                    «2»: 0–11 баллов (менее 50%)
+                <h3 style="color: #66fcf1;">Критерии оценки</h3>
+                <p style="text-align: left; font-size: 22px; line-height: 1.6;">
+                    «5»: 13–15 баллов (85-100%)<br>
+                    «4»: 11–12 баллов (70-84%)<br>
+                    «3»: 8–10 баллов (50-69%)<br>
+                    «2»: 0–7 баллов (менее 50%)
                 </p>
                 <button onclick="closeModal('modal-criteria')">Закрыть</button>
             </div>
@@ -273,16 +328,16 @@
 
         <div id="modal-secret" class="modal-overlay">
             <div class="modal-content">
-                <h3>Награда! 🏆</h3>
-                <p style="font-size: 50px; color: #8e44ad; margin: 10px 0;">Sofa - Диван</p>
+                <h3 style="color: #f1c40f;">Награда! 🏆</h3>
+                <p style="font-size: 50px; color: #8e44ad; margin: 10px 0; font-weight: bold; text-shadow: 0 0 10px #8e44ad;">Sofa - Диван</p>
                 <button onclick="closeModal('modal-secret')">Супер!</button>
             </div>
         </div>
 
         <div id="modal-help" class="modal-overlay">
             <div class="modal-content">
-                <h3>Как играть?</h3>
-                <p id="help-text"></p>
+                <h3 style="color: #4ade80;">Как играть?</h3>
+                <p id="help-text" style="font-size: 22px; line-height: 1.5;"></p>
                 <button onclick="closeModal('modal-help')">В бой!</button>
             </div>
         </div>
@@ -307,7 +362,7 @@
 
     // БЛОКИРОВКА СКРОЛЛА И КОНТЕКСТНОГО МЕНЮ БРАУЗЕРА
     window.addEventListener('keydown', e => {
-        if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
+       if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
     });
     container.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -332,22 +387,23 @@
     let animationFrameId;
 
     function switchScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+       document.getElementById(id).classList.add('active');
     }
     function showModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function unlockGame() {
-        document.getElementById('btn-start').disabled = false;
-        document.getElementById('btn-start').innerText = "🎮 Начать игру";
-        switchScreen('screen-menu'); bgMusic.play().catch(()=>{});
+       document.getElementById('btn-start').disabled = false;
+       document.getElementById('btn-start').innerText = "🎮 Начать игру";
+       switchScreen('screen-menu');
+       bgMusic.play().catch(()=>{});
     }
 
     function updateScore() { document.getElementById('score-display').innerText = score; }
 
     function showError(text, callback) {
         isPaused = true; playSfx('wrong');
-        // Штраф за ошибку убран, игрок просто не получает +1 балл
+        score -= 5; updateScore(); 
         document.getElementById('error-text').innerHTML = text;
         showModal('modal-error');
         window.errorCallback = callback;
@@ -359,10 +415,10 @@
 
     function showHelp() {
         let txt = "";
-        if(currentLevel === 1) txt = "Удерживай ПРАВУЮ кнопку мыши, чтобы включить голубой фонарик и сканировать темноту. Нашел правильное слово? Кликай по нему ЛЕВОЙ кнопкой, пока держишь фонарик!";
-        if(currentLevel === 2) txt = "Используй стрелочки ⬅️ и ➡️ для движения пушки. Нажми ПРОБЕЛ, чтобы выстрелить лазером в планету с правильным ответом.";
-        if(currentLevel === 3) txt = "Кликай по словам внизу, чтобы перенести их в предложение. Если передумал — кликни на слово в предложении, и оно вернется обратно. Ошибка засчитается только после того, как заполнены все пропуски!";
-        document.getElementById('help-text').innerText = txt;
+        if(currentLevel === 1) txt = "Удерживай <b>ПРАВУЮ кнопку мыши</b>, чтобы включить голубой фонарик и сканировать темноту. Нашел правильное слово? Кликай по нему <b>ЛЕВОЙ кнопкой</b>, пока держишь фонарик!";
+        if(currentLevel === 2) txt = "Используй стрелочки <b>⬅️ и ➡️</b> для движения пушки. Нажми <b>ПРОБЕЛ</b>, чтобы выстрелить лазером в звезду с правильным ответом.";
+        if(currentLevel === 3) txt = "Кликай по словам внизу, чтобы перенести их в предложение. Если передумал — кликни на слово в предложении, и оно вернется обратно. Ошибка засчитается только после того, как заполнены <b>все пропуски</b>!";
+        document.getElementById('help-text').innerHTML = txt;
         showModal('modal-help');
     }
 
@@ -376,32 +432,29 @@
         else if(lvl === 3) initLevel3();
     }
 
-    // --- УРОВЕНЬ 1: ФОНАРИК (8 Заданий) ---
+    // --- УРОВЕНЬ 1: ФОНАРИК ---
     const l1Data = [
-        { sub: "The boy (he) ___", correct: "reads", wrong: ["read", "raeds", "reeds"], rule: "С 'he' глагол требует -s!" },
-        { sub: "I ___ apples", correct: "like", wrong: ["likes", "liek", "laike"], rule: "С 'I' окончание -s не нужно!" },
-        { sub: "The cat (it) ___", correct: "jumps", wrong: ["jump", "jumes", "jumpps"], rule: "С 'it' (кот) глагол получает -s!" },
-        { sub: "We ___ books", correct: "read", wrong: ["reads", "raed", "reds"], rule: "С 'We' окончание не нужно!" },
-        { sub: "The girl (she) ___", correct: "runs", wrong: ["run", "runes", "rns"], rule: "С 'she' глагол требует -s!" },
-        { sub: "They ___ tennis", correct: "play", wrong: ["plays", "plaies", "pley"], rule: "С 'They' окончание -s не нужно!" },
-        { sub: "My brother (he) ___", correct: "sleeps", wrong: ["sleep", "sleeppes", "sleps"], rule: "С 'he' глагол требует -s!" },
-        { sub: "You ___ English", correct: "study", wrong: ["studies", "studi", "studys"], rule: "С 'You' окончание -s не нужно!" }
+        { sub: "The boy (he) ___", correct: "reads", wrong: "read", rule: "С местоимением 'he' (он) глагол требует окончания -s!" },
+        { sub: "I ___ apples", correct: "like", wrong: "likes", rule: "С местоимением 'I' (я) окончание -s не нужно!" },
+        { sub: "The cat (it) ___", correct: "jumps", wrong: "jump", rule: "Животное в единственном числе — это 'it', поэтому глагол получает -s!" },
+        { sub: "We ___ books", correct: "read", wrong: "reads", rule: "С местоимением 'We' (мы) глагол остается обычным, без -s!" },
+        { sub: "The girl (she) ___", correct: "runs", wrong: "run", rule: "С местоимением 'she' (она) к глаголу добавляется -s!" }
     ];
 
     let isRightMouseDown = false;
     
     container.addEventListener('mousedown', e => {
         if(e.button === 2 && currentLevel === 1) { 
-            isRightMouseDown = true; updateFlashlight(e); 
+           isRightMouseDown = true; updateFlashlight(e); 
         }
     });
     window.addEventListener('mouseup', e => {
         if(e.button === 2 && currentLevel === 1) { 
-            isRightMouseDown = false; updateFlashlight(e); 
+           isRightMouseDown = false; updateFlashlight(e); 
         }
     });
     container.addEventListener('mousemove', e => {
-        if(isRightMouseDown && currentLevel === 1) updateFlashlight(e);
+       if(isRightMouseDown && currentLevel === 1) updateFlashlight(e);
     });
 
     function updateFlashlight(e) {
@@ -418,51 +471,57 @@
     }
 
     function initLevel1() {
-        if(questionIndex >= 8) { setTimeout(()=>startLevel(2), 1000); return; }
-        let q = l1Data[questionIndex];
-        document.getElementById('l1-subject').innerText = q.sub;
-        
-        const canvas = document.getElementById('l1-words-container');
-        canvas.innerHTML = '';
-        
-        let words = [q.correct, ...q.wrong].sort(() => Math.random() - 0.5);
-        words.forEach((word, i) => {
-            let el = document.createElement('div');
-            el.className = 'hidden-word'; el.innerText = word;
-            
-            let rx = 50 + i * 280 + Math.random() * 80;
-            let ry = 200 + Math.random() * 300;
-            
-            el.style.left = rx + 'px'; el.style.top = ry + 'px';
-            
-            el.onclick = () => {
-                if(isPaused || !isRightMouseDown) return; 
-                
-                isRightMouseDown = false;
-                updateFlashlight(null);
+       if(questionIndex >= 5) { setTimeout(()=>startLevel(2), 1000); return; }
+       let q = l1Data[questionIndex];
+       document.getElementById('l1-subject').innerText = q.sub;
+       
+       const canvas = document.getElementById('l1-words-container');
+       canvas.innerHTML = '';
+       
+       let words = [q.correct, q.wrong].sort(() => Math.random() - 0.5);
+       words.forEach((word, i) => {
+           let el = document.createElement('div');
+           el.className = 'hidden-word'; el.innerText = word;
+           
+           let rx = i === 0 ? 200 + Math.random() * 200 : 700 + Math.random() * 200;
+           let ry = 200 + Math.random() * 300;
+           
+           el.style.left = rx + 'px'; el.style.top = ry + 'px';
+           
+           el.onclick = () => {
+               if(isPaused || !isRightMouseDown) return; 
+               
+               isRightMouseDown = false;
+               updateFlashlight(null);
 
-                if(word === q.correct) {
-                    playSfx('correct'); score++; updateScore(); questionIndex++; initLevel1();
-                } else {
-                    showError(q.rule + "<br><br>Правильный ответ: <b>" + q.correct + "</b>", () => {
-                        questionIndex++; initLevel1();
-                    });
-                }
-            };
-            canvas.appendChild(el);
-        });
+               if(word === q.correct) {
+                   playSfx('correct'); score++; updateScore(); questionIndex++; initLevel1();
+               } else {
+                   // Обновленный дизайн ошибки 1 уровня
+                   let errorMsg = `
+                       <div style="font-size:24px; line-height: 1.5;">
+                           <p style="color:#f1c40f; font-weight:bold; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                               💡 ${q.rule}
+                           </p>
+                           <p>Правильный ответ:<br> <span style="color:#4ade80; font-weight:bold; font-size: 38px;">${q.correct}</span></p>
+                       </div>
+                   `;
+                   showError(errorMsg, () => {
+                       questionIndex++; initLevel1();
+                   });
+               }
+           };
+           canvas.appendChild(el);
+       });
     }
 
-    // --- УРОВЕНЬ 2: ПУШКА (8 Заданий) ---
+    // --- УРОВЕНЬ 2: ПУШКА ---
     const l2Data = [
-        { sub: "The dogs (they)", correct: "don't", wrong: ["doesn't", "dno't"], rule: "Собаки (They) используют don't." },
-        { sub: "The doctor (he)", correct: "doesn't", wrong: ["don't", "deson't"], rule: "Доктор (He) использует doesn't." },
-        { sub: "You", correct: "don't", wrong: ["doesn't", "dnot"], rule: "С 'You' используем don't." },
-        { sub: "My sister (she)", correct: "doesn't", wrong: ["don't", "dsone't"], rule: "Сестра (She) использует doesn't." },
-        { sub: "My friends (they)", correct: "don't", wrong: ["doesn't", "dont'"], rule: "Друзья (They) используют don't." },
-        { sub: "I", correct: "don't", wrong: ["doesn't", "donet"], rule: "С 'I' всегда используем don't." },
-        { sub: "The sun (it)", correct: "doesn't", wrong: ["don't", "dsoent"], rule: "Солнце (It) использует doesn't." },
-        { sub: "We", correct: "don't", wrong: ["doesn't", "dnot"], rule: "С 'We' используем don't." }
+        { sub: "The dogs (they)", correct: "don't", wrong: ["doesn't", "dno't"], rule: "Собаки — это 'They' (Они). С ними используем don't." },
+        { sub: "The doctor (he)", correct: "doesn't", wrong: ["don't", "deson't"], rule: "Доктор — это 'He' (Он). С ним используем doesn't." },
+        { sub: "You", correct: "don't", wrong: ["doesn't", "dnot"], rule: "С местоимением 'You' (ты/вы) всегда используем don't." },
+        { sub: "My sister (she)", correct: "doesn't", wrong: ["don't", "dsone't"], rule: "Сестра — это 'She' (Она). С ней используем doesn't." },
+        { sub: "My friends (they)", correct: "don't", wrong: ["doesn't", "dont'"], rule: "Друзья — это 'They' (Они). С ними используем don't." }
     ];
 
     let l2PlayerX = 600;
@@ -474,185 +533,194 @@
     window.addEventListener('keyup', e => { if(e.code in l2Keys) l2Keys[e.code] = false; });
 
     function initLevel2() {
-        if(questionIndex >= 8) { cancelAnimationFrame(animationFrameId); setTimeout(()=>startLevel(3), 1000); return; }
-        
-        bullet.active = false; document.getElementById('l2-laser').style.display = 'none';
-        document.getElementById('l2-subject').innerText = l2Data[questionIndex].sub;
-        
-        const container = document.getElementById('l2-stars-container');
-        container.innerHTML = ''; starsData = [];
-        
-        let q = l2Data[questionIndex];
-        let words = [q.correct, q.wrong[0], q.wrong[1]].sort(()=>Math.random() - 0.5);
-        
-        let positions = [150, 530, 910];
-        let planetClasses = ['planet-0', 'planet-1', 'planet-2'].sort(()=>Math.random() - 0.5);
-        
-        words.forEach((w, i) => {
-            let el = document.createElement('div');
-            el.className = 'l2-planet ' + planetClasses[i];
-            el.innerText = w;
-            el.style.left = positions[i] + 'px';
-            container.appendChild(el);
-            starsData.push({ el: el, text: w, x: positions[i], y: 150, width: 220, height: 220 });
-        });
-        
-        cancelAnimationFrame(animationFrameId);
-        loopL2();
+       if(questionIndex >= 5) { cancelAnimationFrame(animationFrameId); setTimeout(()=>startLevel(3), 1000); return; }
+       
+       bullet.active = false; document.getElementById('l2-laser').style.display = 'none';
+       document.getElementById('l2-subject').innerText = l2Data[questionIndex].sub;
+       
+       const container = document.getElementById('l2-stars-container');
+       container.innerHTML = ''; starsData = [];
+       
+       let q = l2Data[questionIndex];
+       let words = [q.correct, q.wrong[0], q.wrong[1]].sort(()=>Math.random() - 0.5);
+       let positions = [150, 505, 860]; 
+       
+       words.forEach((w, i) => {
+           let el = document.createElement('div');
+           el.className = 'l2-star'; el.innerText = w;
+           el.style.left = positions[i] + 'px';
+           container.appendChild(el);
+           starsData.push({ el: el, text: w, x: positions[i], y: 150, width: 270, height: 120 });
+       });
+       
+       cancelAnimationFrame(animationFrameId);
+       loopL2();
     }
 
     function loopL2() {
-        if(currentLevel !== 2 || isPaused) { animationFrameId = requestAnimationFrame(loopL2); return; }
-        
-        if(l2Keys.ArrowLeft) l2PlayerX -= 10;
-        if(l2Keys.ArrowRight) l2PlayerX += 10;
+       if(currentLevel !== 2 || isPaused) { animationFrameId = requestAnimationFrame(loopL2); return; }
+       
+       if(l2Keys.ArrowLeft) l2PlayerX -= 10;
+       if(l2Keys.ArrowRight) l2PlayerX += 10;
         if(l2PlayerX < 0) l2PlayerX = 0;
         if(l2PlayerX > 1200) l2PlayerX = 1200;
-        document.getElementById('l2-cannon').style.left = l2PlayerX + 'px';
+       document.getElementById('l2-cannon').style.left = l2PlayerX + 'px';
 
-        if(l2Keys.Space && !bullet.active) {
-            bullet.active = true;
+       if(l2Keys.Space && !bullet.active) {
+           bullet.active = true;
             bullet.x = l2PlayerX + 30;
             bullet.y = 580;
             let bEl = document.getElementById('l2-laser');
-            bEl.style.display = 'block'; bEl.style.left = bullet.x + 'px';
+           bEl.style.display = 'block'; bEl.style.left = bullet.x + 'px';
         }
 
-        if(bullet.active) {
+       if(bullet.active) {
             bullet.y -= 7; 
             let bEl = document.getElementById('l2-laser');
-            bEl.style.top = bullet.y + 'px';
+           bEl.style.top = bullet.y + 'px';
 
-            starsData.forEach(star => {
+           starsData.forEach(star => {
                 if (bullet.x < star.x + star.width && bullet.x + 20 > star.x &&
-                    bullet.y < star.y + star.height && bullet.y + 60 > star.y) {
-                    
-                    bullet.active = false; bEl.style.display = 'none';
-                    checkL2Shoot(star.text, l2Data[questionIndex]);
+                   bullet.y < star.y + star.height && bullet.y + 60 > star.y) {
+                   
+                   bullet.active = false; bEl.style.display = 'none';
+                   checkL2Shoot(star.text, l2Data[questionIndex]);
                 }
             });
 
-            if(bullet.y < 0) { bullet.active = false; bEl.style.display = 'none'; }
+           if(bullet.y < 0) { bullet.active = false; bEl.style.display = 'none'; }
         }
 
-        animationFrameId = requestAnimationFrame(loopL2);
+       animationFrameId = requestAnimationFrame(loopL2);
     }
 
     function checkL2Shoot(shotText, q) {
         if(shotText === q.correct) {
-            playSfx('correct'); score++; updateScore(); questionIndex++;
-            setTimeout(initLevel2, 500);
+           playSfx('correct'); score++; updateScore(); questionIndex++;
+           setTimeout(initLevel2, 500);
         } else {
-            let msg = `Ты подбил не ту планету: ${shotText}. `;
-            if(q.wrong.includes(shotText) && shotText.length === q.correct.length && shotText !== q.wrong[0]) {
-                msg = `Это планета-обманка с перепутанными буквами: ${shotText}. `;
+            let msgTitle = `Ты подбил не ту звезду: <span style="color:#fff;">${shotText}</span>`;
+           if(q.wrong.includes(shotText) && shotText.length === q.correct.length && shotText !== q.wrong[0]) {
+                msgTitle = `Ой! Это звезда-обманка с опечаткой: <span style="color:#fff;">${shotText}</span>`;
             }
-            showError(msg + "<br>" + q.rule + "<br>Правильный ответ: <b>" + q.correct + "</b>", () => {
-                questionIndex++; initLevel2();
+            
+            // Обновленный дизайн ошибки 2 уровня
+            let errorMsg = `
+                <div style="font-size:24px; line-height: 1.5;">
+                    <p style="color:#ff4757; font-weight:bold;">${msgTitle}</p>
+                    <p style="color:#f1c40f; font-weight:bold; margin: 20px 0; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                        💡 ${q.rule}
+                    </p>
+                    <p>Правильный ответ:<br> <span style="color:#4ade80; font-weight:bold; font-size: 38px;">${q.correct}</span></p>
+                </div>
+            `;
+           showError(errorMsg, () => {
+               questionIndex++; initLevel2();
             });
         }
     }
 
-    // --- УРОВЕНЬ 3: КОНСТРУКТОР ПРЕДЛОЖЕНИЯ (8 Заданий) ---
+    // --- УРОВЕНЬ 3: КОНСТРУКТОР ПРЕДЛОЖЕНИЯ ---
     const l3Data = [
         { q: "Does he play chess ?", words: ["he", "play", "Does", "chess", "?"], rule: "Для местоимения <b>he</b> в вопросе всегда используем <b>Does</b>." },
         { q: "Do they like pizza ?", words: ["like", "?", "they", "Do", "pizza"], rule: "Для местоимения <b>they</b> в вопросе всегда используем <b>Do</b>." },
         { q: "Does she read books ?", words: ["books", "she", "?", "read", "Does"], rule: "Для местоимения <b>she</b> в вопросе всегда используем <b>Does</b>." },
         { q: "Do we go home ?", words: ["home", "we", "Do", "?", "go"], rule: "Для местоимения <b>we</b> в вопросе всегда используем <b>Do</b>." },
-        { q: "Does it fly high ?", words: ["high", "fly", "Does", "?", "it"], rule: "Для местоимения <b>it</b> в вопросе всегда используем <b>Does</b>." },
-        { q: "Do you drink tea ?", words: ["drink", "you", "Do", "?", "tea"], rule: "Для местоимения <b>you</b> в вопросе всегда используем <b>Do</b>." },
-        { q: "Does John eat meat ?", words: ["meat", "John", "eat", "Does", "?"], rule: "John — это он (he), поэтому в вопросе используем <b>Does</b>." },
-        { q: "Do cats catch mice ?", words: ["cats", "?", "Do", "mice", "catch"], rule: "Cats — это они (they), множественное число, используем <b>Do</b>." }
+        { q: "Does it fly high ?", words: ["high", "fly", "Does", "?", "it"], rule: "Для местоимения <b>it</b> в вопросе всегда используем <b>Does</b>." }
     ];
 
     let l3Target = [];
     let l3Current = [];
 
     function initLevel3() {
-        if(questionIndex >= 8) { finishGame(); return; }
-        let currentQ = l3Data[questionIndex];
-        l3Target = currentQ.q.split(" ");
-        l3Current = [];
-        renderL3();
+       if(questionIndex >= 5) { finishGame(); return; }
+       let currentQ = l3Data[questionIndex];
+       l3Target = currentQ.q.split(" ");
+       l3Current = [];
+       renderL3();
     }
 
     function renderL3() {
-        let sentContainer = document.getElementById('l3-sentence');
-        let poolContainer = document.getElementById('l3-pool');
-        sentContainer.innerHTML = ''; poolContainer.innerHTML = '';
+       let sentContainer = document.getElementById('l3-sentence');
+       let poolContainer = document.getElementById('l3-pool');
+       sentContainer.innerHTML = ''; poolContainer.innerHTML = '';
 
-        for(let i=0; i<l3Target.length; i++) {
-            let slot = document.createElement('div');
-            slot.className = 'l3-slot';
-            
-            if(l3Current[i]) {
-                slot.classList.add('filled');
-                slot.innerText = l3Current[i];
-                slot.onclick = () => {
-                    if(isPaused) return;
-                    l3Current.splice(i, 1);
-                    renderL3();
+       // Отрисовка слотов предложения
+       for(let i=0; i<l3Target.length; i++) {
+           let slot = document.createElement('div');
+           slot.className = 'l3-slot';
+           
+           if(l3Current[i]) {
+               slot.classList.add('filled');
+               slot.innerText = l3Current[i];
+               // Функция ВОЗВРАТА слова обратно
+               slot.onclick = () => {
+                   if(isPaused) return;
+                   l3Current.splice(i, 1); // Удаляем слово
+                   renderL3(); 
                 };
             } else {
-                slot.innerText = "___";
+               slot.innerText = "___";
             }
-            sentContainer.appendChild(slot);
+           sentContainer.appendChild(slot);
         }
 
-        let availableWords = [...l3Data[questionIndex].words];
-        l3Current.forEach(w => {
-            let idx = availableWords.indexOf(w);
+       // Подготовка пула
+       let availableWords = [...l3Data[questionIndex].words];
+       l3Current.forEach(w => {
+           let idx = availableWords.indexOf(w);
             if(idx > -1) availableWords.splice(idx, 1);
         });
 
-        availableWords.forEach(w => {
-            let btn = document.createElement('div');
-            btn.className = 'l3-word'; btn.innerText = w;
-            btn.onclick = () => {
-                if(isPaused) return;
-                if(l3Current.length < l3Target.length) {
-                    l3Current.push(w);
-                    renderL3();
-                    checkL3Completion();
+       // Отрисовка пула
+       availableWords.forEach(w => {
+           let btn = document.createElement('div');
+           btn.className = 'l3-word'; btn.innerText = w;
+           btn.onclick = () => {
+               if(isPaused) return;
+               if(l3Current.length < l3Target.length) {
+                   l3Current.push(w);
+                   renderL3();
+                   checkL3Completion();
                 }
             };
-            poolContainer.appendChild(btn);
+           poolContainer.appendChild(btn);
         });
     }
 
     function checkL3Completion() {
-        if(l3Current.length === l3Target.length) {
-            let expected = l3Target.join(" ");
-            let actual = l3Current.join(" ");
-            
+       if(l3Current.length === l3Target.length) {
+           let expected = l3Target.join(" ");
+           let actual = l3Current.join(" ");
+           
             if(actual === expected) {
-                playSfx('correct'); score++; updateScore(); questionIndex++;
-                setTimeout(initLevel3, 1000);
+               playSfx('correct'); score++; updateScore(); questionIndex++;
+               setTimeout(initLevel3, 1000);
             } else {
-                let currentQ = l3Data[questionIndex];
-                let errorMsg = `
-                    <div style="font-size:22px; line-height: 1.6;">
-                        <p style="margin: 0;">Ваш ответ:</p>
-                        <p style="color:#d9534f; font-weight:bold; margin-top: 5px;">${actual}</p>
-                        
-                        <p style="margin: 0; margin-top: 15px;">Правильный ответ:</p>
-                        <p style="color:#4ade80; font-weight:bold; margin-top: 5px;">${expected}</p>
-                        
-                        <hr style="border-color:#45a29e; margin: 20px 0;">
-                        
-                        <p style="text-align:left; font-size: 20px;">
-                            <b>Формула вопроса:</b><br> 
-                            <span style="color:#66fcf1">Do / Does</span> + <span style="color:#f1c40f">Кто/Что</span> + <span style="color:#fff">Действие</span> + остальное + <span style="color:#66fcf1">?</span>
-                        </p>
-                        <p style="text-align:left; font-size: 20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                            💡 ${currentQ.rule}
-                        </p>
-                    </div>
+               let currentQ = l3Data[questionIndex];
+               let errorMsg = `
+                   <div style="font-size:22px; line-height: 1.6;">
+                       <p style="margin: 0;">Ваш ответ:</p>
+                       <p style="color:#ff4757; font-weight:bold; margin-top: 5px;">${actual}</p>
+                       
+                       <p style="margin: 0; margin-top: 15px;">Правильный ответ:</p>
+                       <p style="color:#4ade80; font-weight:bold; margin-top: 5px;">${expected}</p>
+                       
+                       <hr style="border-color:#45a29e; margin: 20px 0;">
+                       
+                       <p style="text-align:left; font-size: 20px;">
+                           <b>Формула вопроса:</b><br> 
+                           <span style="color:#66fcf1">Do / Does</span> + <span style="color:#f1c40f">Кто</span> + <span style="color:#4ade80">Действие</span> + остальное + <span style="color:#66fcf1">?</span>
+                       </p>
+                       <p style="text-align:left; font-size: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; color:#f1c40f;">
+                           💡 ${currentQ.rule}
+                       </p>
+                   </div>
                 `;
-                
-                showError(errorMsg, () => {
-                    questionIndex++; // Идем дальше, но балл не начисляется
-                    initLevel3();
+               
+               showError(errorMsg, () => {
+                   l3Current = []; // Сбрасываем предложение после ошибки
+                   renderL3();
                 });
             }
         }
@@ -660,15 +728,15 @@
 
     // --- ФИНАЛ ---
     function finishGame() {
-        switchScreen('screen-end');
-        document.getElementById('final-score').innerText = score;
-        
-        let grade = "2";
-        if(score >= 21) grade = "5";
-        else if(score >= 17) grade = "4";
-        else if(score >= 12) grade = "3";
-        
-        document.getElementById('final-grade').innerText = grade;
+       switchScreen('screen-end');
+       document.getElementById('final-score').innerText = score;
+       
+       let grade = "2";
+        if(score >= 13) grade = "5";
+        else if(score >= 11) grade = "4";
+        else if(score >= 8) grade = "3";
+       
+       document.getElementById('final-grade').innerText = grade;
         if(grade === "5") document.getElementById('secret-word-btn').style.display = 'inline-block';
     }
 </script>
